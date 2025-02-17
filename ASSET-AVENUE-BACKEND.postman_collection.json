@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "6ea34306-7aeb-4dd9-8ed4-0eac2340281a",
+		"name": "ASSET-AVENUE-BACKEND",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29472748"
+	},
+	"item": [
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "USER (SIGNUP / SIGNIN)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"walletAddress\": \"GkFrRPeh9DZgGwqi9W39NZsyosg3UA3an8KaRqBMcP3y\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{AAB_URL}}/auth/user",
+							"host": [
+								"{{AAB_URL}}"
+							],
+							"path": [
+								"auth",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ORDERS",
+			"item": [
+				{
+					"name": "CREATE-ORDER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AAB_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"wertOrderId\": \"121212\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{AAB_URL}}/order/create",
+							"host": [
+								"{{AAB_URL}}"
+							],
+							"path": [
+								"order",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ORDER-BY-WERT-ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AAB_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{AAB_URL}}/order/findByOrderId/01JKXW66VFPYK9BJQKV9XXFFGT",
+							"host": [
+								"{{AAB_URL}}"
+							],
+							"path": [
+								"order",
+								"findByOrderId",
+								"01JKXW66VFPYK9BJQKV9XXFFGT"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "AAB_URL",
+			"value": "localhost:3039",
+			"type": "string"
+		},
+		{
+			"key": "AAB_TOKEN",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YWNmZGIyZmFmM2JhYTFhZDNmM2M0OCIsIndhbGxldEFkZHJlc3MiOiJHa0ZyUlBlaDlEWmdHd3FpOVczOU5ac3lvc2czVUEzYW44S2FScUJNY1AzeSIsImlhdCI6MTczOTM5MDgzMCwiZXhwIjoxNzM5NjUwMDMwfQ.0ABYaYY1AH1arQHtyaZV_wX7FG6vMgXiPLY48hqWI4o",
+			"type": "string"
+		}
+	]
+}

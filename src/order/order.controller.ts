@@ -1,0 +1,55 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UsePipes,
+  UseGuards,
+  Req,
+} from "@nestjs/common";
+import { OrderService } from "./order.service";
+import { ZodValidationPipe } from "src/zode.validation.pipe";
+import { CreateOrderDto, CreateOrderSchema } from "./dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
+import { RolesGuard } from "src/auth/guards/roles.guard";
+import { Roles } from "src/decorators/roles.decorator";
+import { UserRoles } from "src/mongoose/schemas/user.schema";
+import { Request } from "express";
+
+@Controller("order")
+export class OrderController {
+  constructor(private readonly orderService: OrderService) {}
+
+  @Post("create")
+  @UsePipes(new ZodValidationPipe(CreateOrderSchema))
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoles.USER)
+  create(@Req() req: Request, @Body() createOrderDto: CreateOrderDto) {
+    return this.orderService.create(req.user, createOrderDto);
+  }
+
+  @Get("findByOrderId/:id")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoles.USER)
+  findByOrderId(@Req() req: Request, @Param("id") id: string) {
+    return this.orderService.findByOrderId(req.user, id);
+  }
+
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.orderService.findOne(+id);
+  }
+
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateOrderDto: any) {
+    return this.orderService.update(+id, updateOrderDto);
+  }
+
+  @Post("wert/webhook")
+  wertWebhook(@Body() body: any) {
+    return this.orderService.wertWebhook(body);
+  }
+}
