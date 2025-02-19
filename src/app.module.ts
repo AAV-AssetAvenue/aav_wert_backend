@@ -17,7 +17,8 @@ import * as mongoosePaginate from "mongoose-paginate-v2";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { ScheduleModule } from "@nestjs/schedule";
-import { OrderModule } from './order/order.module';
+import { OrderModule } from "./order/order.module";
+import { StakingModule } from "./staking/staking.module";
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { OrderModule } from './order/order.module';
     HealthModule,
     AuthModule,
     OrderModule,
+    StakingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

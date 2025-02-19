@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"walletAddress\": \"GkFrRPeh9DZgGwqi9W39NZsyosg3UA3an8KaRqBMcP3y\"\n}",
+							"raw": "{\n    \"walletAddress\": \"GkFrRPeh9DZgGwqi9W39NZsyosg3UA3an8KaRqBMcP333\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -108,6 +108,105 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "STAKING",
+			"item": [
+				{
+					"name": "CREATE-STAKING-ENTRY",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AAB_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"txHash\": \"test-hash\",\n    \"stakeAmount\": \"test-amount\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{AAB_URL}}/staking/create",
+							"host": [
+								"{{AAB_URL}}"
+							],
+							"path": [
+								"staking",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FIND-STAKING-TX-USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AAB_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{AAB_URL}}/staking/findAll",
+							"host": [
+								"{{AAB_URL}}"
+							],
+							"path": [
+								"staking",
+								"findAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FIND-ONE-STAKING-TX-USER",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AAB_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{AAB_URL}}/staking/findOne/67b61600fddc1a5180b6ca90",
+							"host": [
+								"{{AAB_URL}}"
+							],
+							"path": [
+								"staking",
+								"findOne",
+								"67b61600fddc1a5180b6ca90"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -140,7 +239,7 @@
 		},
 		{
 			"key": "AAB_TOKEN",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YWNmZGIyZmFmM2JhYTFhZDNmM2M0OCIsIndhbGxldEFkZHJlc3MiOiJHa0ZyUlBlaDlEWmdHd3FpOVczOU5ac3lvc2czVUEzYW44S2FScUJNY1AzeSIsImlhdCI6MTczOTM5MDgzMCwiZXhwIjoxNzM5NjUwMDMwfQ.0ABYaYY1AH1arQHtyaZV_wX7FG6vMgXiPLY48hqWI4o",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjYxNWUyZmRkYzFhNTE4MGI2Y2E4YyIsIndhbGxldEFkZHJlc3MiOiJHa0ZyUlBlaDlEWmdHd3FpOVczOU5ac3lvc2czVUEzYW44S2FScUJNY1AzMzMiLCJpYXQiOjE3Mzk5ODY0MDMsImV4cCI6MTc0MDU5MTIwM30.04ljuK85mhikHFYOzXL8k0Zjil-PvyCExeD-rUXD3jw",
 			"type": "string"
 		}
 	]
