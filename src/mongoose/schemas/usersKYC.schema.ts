@@ -4,7 +4,12 @@ import * as mongoosePaginate from "mongoose-paginate-v2";
 import { User } from "./user.schema";
 
 export type UsersKYCDocument = HydratedDocument<UsersKYC>;
-
+ enum KycStatus {
+  NOT_SUBMITTED = "not_submitted",
+  PENDING = "pending",
+  APPROVED = "approved",
+  REJECTED = "rejected",
+} 
 @Schema({
   timestamps: true,
 })
@@ -47,12 +52,29 @@ export class UsersKYC {
     type: String,
     required: true,
   })
-  bankAccount: string;
-
+  bankType: string;
   @Prop({
-    type: Number,
+    type: String,
+    required: true,
   })
-  kycStep: number; // 1,2,3
+  bankAccount: string;
+  @Prop({
+    index: true,
+    unique: true,
+    trim: true,
+  })
+  walletAddress: string;
+  @Prop({
+    type: String,
+    enum: [
+      KycStatus.NOT_SUBMITTED,
+      KycStatus.PENDING,
+      KycStatus.APPROVED,
+      KycStatus.REJECTED
+    ],
+    default: KycStatus.NOT_SUBMITTED,
+  })
+  kycStatus: string; 
 
   
 }

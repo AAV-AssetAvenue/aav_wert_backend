@@ -11,7 +11,7 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { UserKycService } from "./userKyc.service";
-import { UserKycDTO, UserKycSchema } from "./dto";
+import { UserKycDTO, UserKycSchema, UserUpdateKycDTO, UserUpdateKycSchema } from "./dto";
 import { ZodValidationPipe } from "src/zode.validation.pipe";
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
@@ -29,24 +29,24 @@ export class UserKycController {
 
   // Get all KYC records 
   @Get()
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findAll(@Query("page") page?: number, @Query("limit") limit?: number) {
     return await this.userKycService.getAllKYC(page, limit);
   }
 
   // Get KYC record by ID
-  @Get(":id")
+  @Get(":walletAddress")
   // @UseGuards(JwtAuthGuard)
-  async findOne(@Param("id") id: string) {
-    return await this.userKycService.getKYCById(id);
+  async findOne(@Param("walletAddress") walletAddress: string) {
+    return await this.userKycService.getKYCById(walletAddress);
   }
 
   // Update KYC record by ID
-  @Patch(":id")
+  @Patch(":walletAddress")
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ZodValidationPipe(UserKycSchema.partial()))
-  async update(@Param("id") id: string, @Body() data: Partial<UserKycDTO>) {
-    return await this.userKycService.updateKYC(id, data);
+  // @UsePipes(new ZodValidationPipe(UserUpdateKycSchema.partial()))
+  async update(@Param("walletAddress") walletAddress: string, @Body() data: Partial<UserUpdateKycDTO>) {
+    return await this.userKycService.updateKYC(walletAddress, data);
   }
 
   // Delete KYC record by ID

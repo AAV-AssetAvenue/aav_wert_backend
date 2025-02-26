@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
-import { UserKycDTO } from "./dto";
+import { UserKycDTO, UserUpdateKycDTO } from "./dto";
 import { UsersKYC, UsersKYCDocument } from "src/mongoose/schemas/usersKYC.schema";
 import { User, UserDocument } from "src/mongoose/schemas/user.schema";
 import { Model } from "mongoose";
@@ -23,14 +23,15 @@ export class UserKycService {
 
     const newKyc = await this.userKycModel.create({
       user:user._id,
-      walletAddress: user.walletAddress,
       email: data.email,
       name: data.name,
       idType: data.idType,
       idNumber: data.idNumber,
       bank: data.bank,
       bankAccount: data.bankAccount,
-      kycStep: 1,
+      bankType: data.bankType,
+      walletAddress:data.walletAddress,
+      kycStatus: "pending",
     });
     return newKyc
   }
@@ -41,25 +42,29 @@ export class UserKycService {
   }
 
   // Get KYC record by ID
-  async getKYCById(id: string): Promise<UsersKYC> {
-    const record = await this.userKycModel.findById(id);
+  async getKYCById(walletAddress: string): Promise<UsersKYC> {
+    const record = await this.userKycModel.findOne({walletAddress:walletAddress});
     if (!record) {
-      throw new NotFoundException("KYC record not found.");
+      return record;
     }
     return record;
   }
 
   // Update KYC record by ID
-  async updateKYC(id: string, data: Partial<UserKycDTO>): Promise<UsersKYC> {
-    const updatedRecord = await this.userKycModel.findByIdAndUpdate(id, data, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updatedRecord) {
-      throw new NotFoundException("KYC record not found.");
+  async updateKYC(walletAddress: string, data: Partial<UserUpdateKycDTO>) {
+   
+    const record = await this.userKycModel.findOne({walletAddress:walletAddress});
+    if (!record) {
+      return record;
     }
-    return updatedRecord;
+    record.email = data.email;
+    record.name = data.name;
+    record.idType = data.idType;
+    record.idNumber = data.idNumber;
+    record.bank = data.bank;
+    record.bankAccount = data.bankAccount;
+    await record.save();
+    return record;
   }
 
   // Delete KYC record by ID
