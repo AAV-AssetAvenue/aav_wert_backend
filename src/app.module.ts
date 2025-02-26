@@ -19,6 +19,7 @@ import { join } from "path";
 import { ScheduleModule } from "@nestjs/schedule";
 import { OrderModule } from "./order/order.module";
 import { StakingModule } from "./staking/staking.module";
+import { UserKycModule } from "./userKyc/userKyc.module";
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { StakingModule } from "./staking/staking.module";
     AuthModule,
     OrderModule,
     StakingModule,
+    UserKycModule
   ],
   controllers: [AppController],
   providers: [AppService],
