@@ -59,6 +59,10 @@ export class UsersKYC {
   })
   bankAccount: string;
   @Prop({
+    type: String,
+  })
+  bic: string;
+  @Prop({
     index: true,
     unique: true,
     trim: true,
