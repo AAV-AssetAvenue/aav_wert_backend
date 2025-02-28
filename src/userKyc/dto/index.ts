@@ -19,12 +19,7 @@ export type UserKycDTO = z.infer<typeof UserKycSchema>;
 
 
 export const UserUpdateKycSchema = z.object({
-    email: z.string(),
-    name: z.string(),
- 
-    idType: z.string(),
-    idNumber: z.string(),
- 
+    email: z.string(), 
     bank: z.string(),
     bankAccount: z.string(),
 

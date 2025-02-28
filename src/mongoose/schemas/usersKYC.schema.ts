@@ -75,7 +75,16 @@ export class UsersKYC {
     default: KycStatus.NOT_SUBMITTED,
   })
   kycStatus: string; 
-
+  @Prop({
+    type: String,
+    required: true,
+  })
+  idDocumentUrl: String;
+  @Prop({
+    type: String,
+    required: true,
+  })
+  selfieUrl: String
   
 }
 
