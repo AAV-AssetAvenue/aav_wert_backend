@@ -13,7 +13,10 @@ export class UserKycService {
   ) {}
 
   // Create KYC record
-  async createKYC(data: UserKycDTO): Promise<UsersKYC> {
+  async createKYC(
+    data: UserKycDTO,
+    files: { idDocumentUrl: string; selfieUrl: string }
+  ): Promise<UsersKYC> {
     const existingRecord = await this.userKycModel.findOne({ email: data.email });
 
     if (existingRecord) {
@@ -32,6 +35,8 @@ export class UserKycService {
       bankType: data.bankType,
       walletAddress:data.walletAddress,
       kycStatus: "pending",
+      idDocumentUrl: files.idDocumentUrl, // Save S3 URL
+      selfieUrl: files.selfieUrl, // Save S3 URL
     });
     return newKyc
   }
@@ -58,9 +63,6 @@ export class UserKycService {
       return record;
     }
     record.email = data.email;
-    record.name = data.name;
-    record.idType = data.idType;
-    record.idNumber = data.idNumber;
     record.bank = data.bank;
     record.bankAccount = data.bankAccount;
     await record.save();
