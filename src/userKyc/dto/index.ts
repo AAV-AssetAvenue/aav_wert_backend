@@ -9,6 +9,7 @@ export const UserKycSchema = z.object({
  
     bank: z.string(),
     bankAccount: z.string(),
+    bic: z.string().optional(),
     bankType: z.string(),
 
     walletAddress: z.string(),

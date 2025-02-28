@@ -26,7 +26,7 @@ export const multerOptions = {
     },
   }),
   fileFilter: (req, file, cb) => {
-    if (!file.mimetype.match(/image\/(jpeg|jpg|png)/)) {
+    if (!file.mimetype.match(/image\/(jpeg|jpg|png)|application\/pdf/)) {
       return cb(new Error("Only JPEG, JPG, and PNG files are allowed!"), false);
     }
     cb(null, true);
