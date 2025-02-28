@@ -19,6 +19,7 @@ export const multerOptions = {
   storage: multerS3({
     s3, // ✅ Use S3Client instead of `new S3()`
     bucket: process.env.AWS_S3_BUCKET!,
+    // acl: "public-read",
     key: (req, file, cb) => {
       const filename = `${Date.now()}-${file.originalname}`;
       cb(null, `uploads/${filename}`);
