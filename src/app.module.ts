@@ -20,6 +20,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { OrderModule } from "./order/order.module";
 import { StakingModule } from "./staking/staking.module";
 import { UserKycModule } from "./userKyc/userKyc.module";
+import { ReferralModule } from "./referral/referral.module";
 
 @Module({
   imports: [
@@ -58,7 +59,8 @@ import { UserKycModule } from "./userKyc/userKyc.module";
     AuthModule,
     OrderModule,
     StakingModule,
-    UserKycModule
+    UserKycModule,
+    ReferralModule
   ],
   controllers: [AppController],
   providers: [AppService],
