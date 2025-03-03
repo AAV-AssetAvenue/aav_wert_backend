@@ -75,6 +75,21 @@ export class OrderService {
     return this.OrderModel.findOne(payload).populate("user");
   }
 
+  async totalAavTransfered() {
+    const orders = await this.OrderModel.find({
+      aavTransferStatus: AavTransferStatus.COMPLETED,
+    });
+
+    if (!orders || !orders.length) {
+      return 0;
+    }
+
+    return orders.reduce(
+      (acc, order) => acc + (+order?.aavTransferAmount || 0),
+      0
+    );
+  }
+
   update(id: any, updateOrderDto: any) {
     return this.OrderModel.updateOne(
       {

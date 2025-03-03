@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"walletAddress\": \"GkFrRPeh9DZgGwqi9W39NZsyosg3UA3an8KaRqBMcP333\"\n}",
+							"raw": "{\n    \"walletAddress\": \"GkFrRPeh9DZgGwqi9W39NZsyosg3UA3an8KaRqBMcP313\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -102,6 +102,34 @@
 								"order",
 								"findByOrderId",
 								"01JKXW66VFPYK9BJQKV9XXFFGT"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOTAL-AAV-TRANSFERED",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{AAB_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{AAB_URL}}/order/totalAavTransfered",
+							"host": [
+								"{{AAB_URL}}"
+							],
+							"path": [
+								"order",
+								"totalAavTransfered"
 							]
 						}
 					},
@@ -239,7 +267,7 @@
 		},
 		{
 			"key": "AAB_TOKEN",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjYxNWUyZmRkYzFhNTE4MGI2Y2E4YyIsIndhbGxldEFkZHJlc3MiOiJHa0ZyUlBlaDlEWmdHd3FpOVczOU5ac3lvc2czVUEzYW44S2FScUJNY1AzMzMiLCJpYXQiOjE3Mzk5ODY0MDMsImV4cCI6MTc0MDU5MTIwM30.04ljuK85mhikHFYOzXL8k0Zjil-PvyCExeD-rUXD3jw",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjYxOTU2NDQwYjU3ZWU2ODM4MmExOSIsIndhbGxldEFkZHJlc3MiOiJHa0ZyUlBlaDlEWmdHd3FpOVczOU5ac3lvc2czVUEzYW44S2FScUJNY1AzMTMiLCJpYXQiOjE3Mzk5ODcyODYsImV4cCI6MTc0MDU5MjA4Nn0.v3D392ylC9OiWF3uRxt9ELRifxjuAXtUC6JqpHCOR0w",
 			"type": "string"
 		}
 	]

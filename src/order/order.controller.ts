@@ -38,6 +38,11 @@ export class OrderController {
     return this.orderService.findByOrderId(req.user, id);
   }
 
+  @Get("/totalAavTransfered")
+  totalAavTransferedAmount() {
+    return this.orderService.totalAavTransfered();
+  }
+
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.orderService.findOne(+id);
