@@ -12,7 +12,6 @@ export class Referral {
 
   @Prop({
 
-    unique: true,
     required: true,
     type: String,
   })  
@@ -27,6 +26,7 @@ export class Referral {
     type: String,
     required: true,
     unique: true,
+    index: true,
   })
   txHash: string;
 

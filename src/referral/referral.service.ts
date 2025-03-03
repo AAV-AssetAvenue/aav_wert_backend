@@ -16,13 +16,7 @@ export class ReferralService {
     if(existingTxHash){
       throw new BadRequestException('can not use same Transaction hash again')
     }
-    const existingRecord = await this.referralModel.findOne({ referralCode: referralDto.referralCode });
 
-    if (existingRecord) {
-      existingRecord.aavAmount += referralDto.aavAmount;
-      await existingRecord.save();
-      return
-    }
      await this.referralModel.create({
       referralCode: referralDto.referralCode,
       aavAmount: referralDto.aavAmount,
