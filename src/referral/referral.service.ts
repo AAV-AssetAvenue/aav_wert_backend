@@ -12,6 +12,10 @@ export class ReferralService {
 
   // Create KYC record
   async createReferral(referralDto:ReferralDTO){
+    const existingTxHash = await this.referralModel.findOne({ txHash: referralDto.txHash });
+    if(existingTxHash){
+      throw new BadRequestException('can not use same Transaction hash again')
+    }
     const existingRecord = await this.referralModel.findOne({ referralCode: referralDto.referralCode });
 
     if (existingRecord) {
@@ -22,6 +26,7 @@ export class ReferralService {
      await this.referralModel.create({
       referralCode: referralDto.referralCode,
       aavAmount: referralDto.aavAmount,
+      txHash: referralDto.txHash,
     });
 
 }

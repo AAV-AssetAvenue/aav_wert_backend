@@ -11,15 +11,25 @@ export type ReferralDocument = HydratedDocument<Referral>;
 export class Referral {
 
   @Prop({
-    index: true,
+
     unique: true,
-    trim: true,
+    required: true,
+    type: String,
   })  
   referralCode: string;
   @Prop({
     type: Number,
+    required: true,
   })
   aavAmount: number;
+
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+  })
+  txHash: string;
+
 }
 
 export const ReferralSchema = SchemaFactory.createForClass(Referral);
