@@ -26,7 +26,7 @@ describe('AppModule', () => {
         SentryModule.forRoot({
           dsn: process.env.SENTRY_DNS,
           debug: true,
-          environment: process.env.ENVIORMENT,
+          environment: process.env.ENVIRONMENT,
           release: 'some_release',
           logLevels: ['debug'],
         }),
