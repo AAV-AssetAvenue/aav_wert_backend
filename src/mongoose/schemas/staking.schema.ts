@@ -4,7 +4,10 @@ import * as mongoosePaginate from "mongoose-paginate-v2";
 import { User } from "./user.schema";
 
 export type StakingDocument = HydratedDocument<Staking>;
-
+export enum StakingAction {
+  STAKE = "stake",
+  UNSTAKE = "unstake",
+}
 @Schema({
   timestamps: true,
 })
@@ -27,6 +30,16 @@ export class Staking {
     required: true,
   })
   stakeAmount: string;
+
+  @Prop({
+    type: String,
+    enum: [
+      StakingAction.STAKE,
+      StakingAction.UNSTAKE,
+    ],
+    required: true,
+  })
+  action: string;
 
   @Prop({
     type: String,
