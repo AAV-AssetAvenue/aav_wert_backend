@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus, BadRequestException } from "@nestjs/common";
 import { StakingDTO } from "./dto";
 import { Staking } from "src/mongoose/schemas/staking.schema";
 import { Model } from "mongoose";
@@ -13,6 +13,10 @@ export class StakingService {
 
   async create(user: UserDto, createStakingDto: StakingDTO) {
     try {
+      if(createStakingDto.action != "stake" && createStakingDto.action != "unstake"){
+              throw new BadRequestException('wrong action');
+        
+      }
       const staking = await this.stakingModel.create({
         ...createStakingDto,
         user: user.id,
