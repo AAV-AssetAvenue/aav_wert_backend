@@ -68,7 +68,7 @@ export class OrderService {
         user: existingUser,
         amount:cryptoOrderDto.amount,
         txHash:cryptoOrderDto.txHash,
-        aavAmount:cryptoOrderDto.aavAmount,
+        aavAmount:Number(cryptoOrderDto.aavAmount),
         currency:cryptoOrderDto.currency,
       })
 
