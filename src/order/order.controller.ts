@@ -12,7 +12,7 @@ import {
 } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { ZodValidationPipe } from "src/zode.validation.pipe";
-import { CreateOrderDto, CreateOrderSchema } from "./dto";
+import { CreateOrderDto, CreateOrderSchema, CryptoOrderDTO,CryptoOrderSchema} from "./dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { RolesGuard } from "src/auth/guards/roles.guard";
 import { Roles } from "src/decorators/roles.decorator";
@@ -30,6 +30,16 @@ export class OrderController {
   create(@Req() req: Request, @Body() createOrderDto: CreateOrderDto) {
     return this.orderService.create(req.user, createOrderDto);
   }
+
+  @Post("cryptoOrder")
+  @UsePipes(new ZodValidationPipe(CryptoOrderSchema))
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoles.USER)
+  createCryptoOrder(@Req() req: Request, @Body() cryptoOrderDto: CryptoOrderDTO) {
+    return this.orderService.cryptoOrder(req.user, cryptoOrderDto);
+  }
+
+  
 
   @Get("findByOrderId/:id")
   @UseGuards(JwtAuthGuard, RolesGuard)

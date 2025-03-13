@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateOrderDto } from "./dto";
+import { CreateOrderDto, CryptoOrderDTO } from "./dto";
 import { InjectModel } from "@nestjs/mongoose";
 import {
   AavTransferStatus,
@@ -18,6 +18,7 @@ import { ConfigService } from "@nestjs/config";
 import { createTransferInstruction } from "@solana/spl-token";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { Transaction, Connection, PublicKey, Keypair } from "@solana/web3.js";
+import { CryptoOrder } from "src/mongoose/schemas/cryptoOrder.schema";
 
 @Injectable()
 export class OrderService {
@@ -25,6 +26,7 @@ export class OrderService {
   private solanaHelper: SolanaHelper;
   constructor(
     @InjectModel(Order.name) private OrderModel: Model<Order>,
+    @InjectModel(CryptoOrder.name) private CryptoOrderModel: Model<CryptoOrder>,
     private authService: AuthService,
     private readonly httpService: HttpService,
     private readonly configService: ConfigService
@@ -45,6 +47,30 @@ export class OrderService {
         user: existingUser,
         wertOrderId: createOrderDto.wertOrderId,
       });
+
+      return order;
+    } catch (error) {
+      throw new HttpException(
+        error?.message || "Internal server error",
+        error.status || HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+  async cryptoOrder(user: UserDto, cryptoOrderDto: CryptoOrderDTO) {
+    try {
+      const existingUser = await this.authService.findOne({ _id: user.id });
+
+      if (!existingUser) {
+        throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
+      }
+
+      const order = await this.CryptoOrderModel.create({
+        user: existingUser,
+        amount:cryptoOrderDto.amount,
+        txHash:cryptoOrderDto.txHash,
+        aavAmount:cryptoOrderDto.aavAmount,
+        currency:cryptoOrderDto.currency,
+      })
 
       return order;
     } catch (error) {
