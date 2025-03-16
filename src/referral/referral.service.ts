@@ -21,7 +21,16 @@ export class ReferralService {
       referralCode: referralDto.referralCode,
       aavAmount: referralDto.aavAmount,
       txHash: referralDto.txHash,
+      solAmount: referralDto.solAmount,
+      usdAmount: referralDto.usdAmount,
+      address: referralDto.address
     });
+
+}
+
+async getSales(referralCode:string){
+  const record = await this.referralModel.find({ referralCode:referralCode });
+  return record;
 
 }
 }

@@ -5,6 +5,7 @@ import { jwtConstants } from "./jwt-constants";
 import { InjectModel } from "@nestjs/mongoose";
 import { User } from "src/mongoose/schemas/user.schema";
 import { Document, Model, Types } from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({})
 export class AuthService {
@@ -18,7 +19,19 @@ export class AuthService {
         walletAddress: payload.walletAddress,
       });
 
+      let referralCode = uuidv4().split('-')[0].toUpperCase(); 
+      const referralCodeUsed = await this.findOne({
+        referralCode: referralCode,
+      });
+      if(referralCodeUsed){
+        referralCode = uuidv4().split('-')[0].toUpperCase(); 
+
+      }
       if (existingUser) {
+        if(!existingUser?.referralCode){
+          existingUser.referralCode = referralCode;
+        }
+        await existingUser.save()
         const tokens = this.generateJwtTokens(existingUser);
         return {
           ...tokens,
@@ -27,6 +40,7 @@ export class AuthService {
 
       const user = await this.create({
         walletAddress: payload.walletAddress,
+        referralCode:referralCode
       });
 
       const tokens = this.generateJwtTokens(user);
@@ -97,7 +111,7 @@ export class AuthService {
         _id: Types.ObjectId;
       }
   ) {
-    const { id, walletAddress } = payload;
+    const { id, walletAddress,referralCode } = payload;
     const access_token = this.jwtService.sign(
       {
         id,
@@ -123,6 +137,7 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
+      referralCode
     };
   }
 

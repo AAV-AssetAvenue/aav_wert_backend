@@ -1,9 +1,11 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   UsePipes,
   UseGuards,
+  Param,
 } from "@nestjs/common";
 import { ReferralService } from "./referral.service";
 import { ReferralDTO, ReferralSchema } from "./dto";
@@ -21,5 +23,19 @@ export class ReferralController {
     return this.referralService.createReferral(referralDto);
   }
 
+
+  @Get(":referralCode")
+    @UseGuards(JwtAuthGuard)
+    async getAllSales(@Param("referralCode") referralCode: string) {
+      return await this.referralService.getSales(referralCode);
+    }
+
+
+    @Get(":referralCode")
+    @UseGuards(JwtAuthGuard)
+    async getCommissionData(@Param("referralCode") referralCode: string) {
+      return await this.referralService.getSales(referralCode);
+    }
+  
 
 }

@@ -29,6 +29,13 @@ export class User {
     default: UserRoles.USER,
   })
   role: string;
+  
+  @Prop({
+    type: String,
+    unique: true,
+
+  })  
+  referralCode: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
