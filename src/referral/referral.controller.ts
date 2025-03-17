@@ -31,11 +31,5 @@ export class ReferralController {
     }
 
 
-    @Get(":referralCode")
-    @UseGuards(JwtAuthGuard)
-    async getCommissionData(@Param("referralCode") referralCode: string) {
-      return await this.referralService.getSales(referralCode);
-    }
-  
 
 }

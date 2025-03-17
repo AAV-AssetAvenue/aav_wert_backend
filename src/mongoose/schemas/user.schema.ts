@@ -36,6 +36,10 @@ export class User {
 
   })  
   referralCode: string;
+
+
+
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

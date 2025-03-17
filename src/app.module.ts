@@ -21,6 +21,7 @@ import { OrderModule } from "./order/order.module";
 import { StakingModule } from "./staking/staking.module";
 import { UserKycModule } from "./userKyc/userKyc.module";
 import { ReferralModule } from "./referral/referral.module";
+import { CommissionsModule } from './commissions/commissions.module';
 
 @Module({
   imports: [
@@ -60,7 +61,8 @@ import { ReferralModule } from "./referral/referral.module";
     OrderModule,
     StakingModule,
     UserKycModule,
-    ReferralModule
+    ReferralModule,
+    CommissionsModule
   ],
   controllers: [AppController],
   providers: [AppService],

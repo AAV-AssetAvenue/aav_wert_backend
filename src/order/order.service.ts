@@ -70,6 +70,7 @@ export class OrderService {
         txHash:cryptoOrderDto.txHash,
         aavAmount:Number(cryptoOrderDto.aavAmount),
         currency:cryptoOrderDto.currency,
+        address:existingUser.walletAddress
       })
 
       return order;
