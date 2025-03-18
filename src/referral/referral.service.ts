@@ -79,7 +79,7 @@ if(!commissionData){
         referralCode: referralDto.referralCode,
         AAVamount:record.aavAmount * 3, // 300% bonus
         address:userRecord.walletAddress,
-        vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+        vestingPeriod: vestingEndDate.getTime() 
       })
 
     }
@@ -95,7 +95,7 @@ if(!commissionData){
       referralCode: referralDto.referralCode,
       AAVamount:30,
       address:userRecord.walletAddress,
-      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+      vestingPeriod: vestingEndDate.getTime()
     })
     commissionData.totalEarnedAAV += 30
 
@@ -112,7 +112,7 @@ if(!commissionData){
       referralCode: referralDto.referralCode,
       AAVamount:40,
       address:userRecord.walletAddress,
-      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+      vestingPeriod: vestingEndDate.getTime()
     })
     commissionData.totalEarnedAAV += 40
     commissionData.totalEarnedSOL += referralDto.solAmount*7/100;
@@ -129,7 +129,7 @@ if(!commissionData){
       referralCode: referralDto.referralCode,
       AAVamount:50,
       address:userRecord.walletAddress,
-      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+      vestingPeriod: vestingEndDate.getTime()
     })
     commissionData.totalEarnedAAV += 50
     commissionData.totalEarnedSOL += referralDto.solAmount*10/100;
@@ -144,7 +144,7 @@ if(!commissionData){
       referralCode: referralDto.referralCode,
       AAVamount:20,
       address:userRecord.walletAddress,
-      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+      vestingPeriod: vestingEndDate.getTime()
     })
     commissionData.totalEarnedAAV += 20
     commissionData.totalEarnedSOL += referralDto.solAmount*5/100;

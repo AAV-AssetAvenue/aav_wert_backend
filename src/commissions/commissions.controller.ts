@@ -15,11 +15,11 @@ export class CommissionsController {
         async getCommissionData(@Param("referralCode") referralCode: string) {
           return await this.commissionService.getCommissionData(referralCode);
         }
-        @Get("vestings")
+        @Get("aav/vestings")
         @UseGuards(JwtAuthGuard)
         @Roles(UserRoles.USER)
         async getVestedAAV(@Req() req: Request) {
-
+          
           return await this.commissionService.getVestedAAV(req.user);
         }
       
