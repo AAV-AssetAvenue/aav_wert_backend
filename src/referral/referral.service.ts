@@ -6,6 +6,7 @@ import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { User,UserDocument } from "src/mongoose/schemas/user.schema";
 import { Commission,CommissionDocument } from "src/mongoose/schemas/commission.schema";
+import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
 
 @Injectable()
 export class ReferralService {
@@ -14,6 +15,7 @@ export class ReferralService {
     @InjectModel(CryptoOrder.name) private cryptoOrderModel: Model<CryptoOrderDocument>,
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
     @InjectModel(Commission.name) private commissionModel: Model<CommissionDocument>,
+    @InjectModel(AAVVested.name) private aAVVestedModel: Model<AAVVestedDocument>,
     
   ) {}
 
@@ -68,34 +70,86 @@ if(!commissionData){
     if(referralDto.aavAmount >= record.aavAmount){
       commissionData.eligible300Bonus = true
       commissionData.totalEarnedAAV += record.aavAmount * 3
-
       await commissionData.save();
+
+      const currentDate = new Date();
+      const vestingEndDate = new Date();
+      vestingEndDate.setMonth(currentDate.getMonth() + 24); 
+      await this.aAVVestedModel.create({
+        referralCode: referralDto.referralCode,
+        AAVamount:record.aavAmount * 3, // 300% bonus
+        address:userRecord.walletAddress,
+        vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+      })
+
     }
   }
 
   const record = await this.referralModel.find({ referralCode:referralDto.referralCode });
   if(record.length > 5){
     // 5th-10th,  30 AAV +6% Commission
-    commissionData.totalEarnedAAV += 30;
+    const currentDate = new Date();
+    const vestingEndDate = new Date();
+    vestingEndDate.setMonth(currentDate.getMonth() + 24); 
+    await this.aAVVestedModel.create({
+      referralCode: referralDto.referralCode,
+      AAVamount:30,
+      address:userRecord.walletAddress,
+      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+    })
+    commissionData.totalEarnedAAV += 30
+
     commissionData.totalEarnedSOL += referralDto.solAmount*6/100;
     commissionData.totalEarnedUSDC += referralDto.usdAmount*6/100;
-
+    await commissionData.save()
   }else if(record.length > 10){
-    commissionData.totalEarnedAAV += 40;
+    // 10th-20th, ⁠40 AAV +7% Commission
+
+    const currentDate = new Date();
+    const vestingEndDate = new Date();
+    vestingEndDate.setMonth(currentDate.getMonth() + 24); 
+    await this.aAVVestedModel.create({
+      referralCode: referralDto.referralCode,
+      AAVamount:40,
+      address:userRecord.walletAddress,
+      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+    })
+    commissionData.totalEarnedAAV += 40
     commissionData.totalEarnedSOL += referralDto.solAmount*7/100;
     commissionData.totalEarnedUSDC += referralDto.usdAmount*7/100;
-
+    await commissionData.save()
   }
   else if(record.length > 20){
-    commissionData.totalEarnedAAV += 50;
+    //20th- ⁠50th, 50 AAV +10% Commission
+
+    const currentDate = new Date();
+    const vestingEndDate = new Date();
+    vestingEndDate.setMonth(currentDate.getMonth() + 24); 
+    await this.aAVVestedModel.create({
+      referralCode: referralDto.referralCode,
+      AAVamount:50,
+      address:userRecord.walletAddress,
+      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+    })
+    commissionData.totalEarnedAAV += 50
     commissionData.totalEarnedSOL += referralDto.solAmount*10/100;
     commissionData.totalEarnedUSDC += referralDto.usdAmount*10/100;
- 
+    await commissionData.save()
   }else{
-    commissionData.totalEarnedAAV += 20;
+    //1st-5th purchase, ⁠20 AAV +5% Commission 
+    const currentDate = new Date();
+    const vestingEndDate = new Date();
+    vestingEndDate.setMonth(currentDate.getMonth() + 24); 
+    await this.aAVVestedModel.create({
+      referralCode: referralDto.referralCode,
+      AAVamount:20,
+      address:userRecord.walletAddress,
+      vestingPeriod: Math.floor(vestingEndDate.getTime()/1000) 
+    })
+    commissionData.totalEarnedAAV += 20
     commissionData.totalEarnedSOL += referralDto.solAmount*5/100;
     commissionData.totalEarnedUSDC += referralDto.usdAmount*5/100;
- 
+    await commissionData.save()
   }
   
 
