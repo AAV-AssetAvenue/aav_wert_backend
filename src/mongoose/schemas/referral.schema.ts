@@ -13,7 +13,6 @@ export class Referral {
   @Prop({
 
     required: true,
-    unique: true,
 
     type: String,
   })  
