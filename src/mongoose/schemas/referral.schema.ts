@@ -13,6 +13,8 @@ export class Referral {
   @Prop({
 
     required: true,
+    unique: true,
+
     type: String,
   })  
   referralCode: string;
@@ -21,6 +23,18 @@ export class Referral {
     required: true,
   })
   aavAmount: number;
+  @Prop({
+    type: Number,
+  })
+  solAmount: number;
+  @Prop({
+    type: Number,
+  })
+  usdAmount: number;
+  @Prop({
+    type: String,
+  })
+  address: string;
 
   @Prop({
     type: String,

@@ -36,6 +36,10 @@ export class CryptoOrder {
     type: String,
   })
   aavAmount: number;
+  @Prop({
+    type: String,
+  })
+  address: number;
 
 }
 
