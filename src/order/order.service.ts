@@ -234,104 +234,39 @@ export class OrderService {
 
 
   async claimReferralCommission(payload: any) {
-    const order = await this.findOne({ wertOrderId: payload?.order?.id });
+   
 
-    if (!order) {
-      return "Order not found";
-    }
 
-    if (payload?.type === "order_failed") {
-      await this.update(order._id, {
-        paymentStatus: PaymentStatus.FAILED,
-        paymentErrorMessage: payload?.order?.error_code,
-        aavTransferStatus: AavTransferStatus.FAILED,
-      });
-    }
+    
+      // const presaleInfo: any = await this.getPresaleInfo();
+      // if (!presaleInfo) {
+       
+      //   return;
+      // }
 
-    if (payload?.type === "order_canceled") {
-      await this.update(order._id, {
-        paymentStatus: PaymentStatus.CANCELLED,
-        paymentErrorMessage:
-          payload?.order?.error_code || "Order canceled by user",
-        aavTransferStatus: AavTransferStatus.FAILED,
-      });
-    }
+      // let aavRate = Number(presaleInfo?.pricePerTokenInUsdc) / 1e6;
+      // if (isNaN(aavRate) || aavRate <= 0) {
+      
+      //   return;
+      // }
 
-    if (payload?.type === "tx_smart_contract_failed") {
-      await this.update(order._id, {
-        paymentStatus: PaymentStatus.FAILED,
-        paymentErrorMessage:
-          payload?.order?.error_code ||
-          "Transaction failed on chain to transfer USDT",
-        aavTransferStatus: AavTransferStatus.FAILED,
-      });
-    }
+      // const aavAmount = Number(usdtAmount / aavRate).toFixed(8);
+      // if (isNaN(Number(aavAmount)) || Number(aavAmount) <= 0) {
+       
+      //   return;
+      // }
 
-    if (payload?.type === "order_complete") {
-      let baseAsset = payload?.order?.base;
-      let usdtAmount = payload?.order?.base_amount;
+      // try {
+      //   const signature = await this.transferToken(
+      //     order.user.walletAddress,
+      //     +aavAmount,
+      //     wallets.tokens[0].mint
+      //   );
 
-      if (baseAsset === "ETH") {
-        const ethPriceInUsdt = await this.pricesHelper.getEthPrice();
-        // calculate USDT value by multiplying ETH amount with ETH price in USDT
-        usdtAmount = +ethPriceInUsdt * +usdtAmount;
-      }
-
-      await this.update(order._id, {
-        paymentStatus: PaymentStatus.COMPLETED,
-        usdtAmount: usdtAmount,
-      });
-
-      const wallets = await this.getWalletAssets();
-      const presaleInfo: any = await this.getPresaleInfo();
-      if (!presaleInfo) {
-        await this.update(order._id, {
-          aavTransferStatus: AavTransferStatus.FAILED,
-          aavTransferErrorMessage: "Failed to fetch presale information",
-        });
-        return;
-      }
-
-      let aavRate = Number(presaleInfo?.pricePerTokenInUsdc) / 1e6;
-      if (isNaN(aavRate) || aavRate <= 0) {
-        await this.update(order._id, {
-          aavTransferStatus: AavTransferStatus.FAILED,
-          aavTransferErrorMessage: "Invalid token price configuration",
-        });
-        return;
-      }
-
-      const aavAmount = Number(usdtAmount / aavRate).toFixed(8);
-      if (isNaN(Number(aavAmount)) || Number(aavAmount) <= 0) {
-        await this.update(order._id, {
-          aavTransferStatus: AavTransferStatus.FAILED,
-          aavTransferErrorMessage: "Invalid token amount calculation",
-        });
-        return;
-      }
-
-      try {
-        const signature = await this.transferToken(
-          order.user.walletAddress,
-          +aavAmount,
-          wallets.tokens[0].mint
-        );
-
-        await this.update(order._id, {
-          aavTransferStatus: AavTransferStatus.COMPLETED,
-          aavTransferedTo: order.user.walletAddress,
-          aavTransferHash: signature.signature,
-          aavTransferAmount: aavAmount,
-          aavTransferFee: signature.estimatedFee,
-        });
-      } catch (error) {
-        await this.update(order._id, {
-          aavTransferStatus: AavTransferStatus.FAILED,
-          aavTransferErrorMessage:
-            error?.message || "Failed to transfer AAV to user wallet",
-        });
-      }
-    }
+      // } catch (error) {
+       
+      // }
+    
   }
 
   async getWalletAssets() {
