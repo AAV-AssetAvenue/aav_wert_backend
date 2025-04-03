@@ -14,8 +14,8 @@ export class CommissionsService {
     
   ) {}
 
-    async getCommissionData(referralCode:string){
-        const record = await this.commissionModel.findOne({ referralCode:referralCode });
+    async getCommissionData(address:string){
+        const record = await this.commissionModel.findOne({ address:address });
         return record;
       }
       async getVestedAAV(user: UserDto){

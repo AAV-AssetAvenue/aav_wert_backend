@@ -10,10 +10,10 @@ export class CommissionsController {
   
       constructor(private readonly commissionService: CommissionsService) {}
           
-        @Get(":referralCode")
-        @UseGuards(JwtAuthGuard)
-        async getCommissionData(@Param("referralCode") referralCode: string) {
-          return await this.commissionService.getCommissionData(referralCode);
+        @Get(":address")
+        // @UseGuards(JwtAuthGuard)
+        async getCommissionData(@Param("address") address: string) {
+          return await this.commissionService.getCommissionData(address);
         }
         @Get("aav/vestings")
         @UseGuards(JwtAuthGuard)

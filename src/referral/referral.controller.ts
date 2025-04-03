@@ -25,7 +25,7 @@ export class ReferralController {
 
 
   @Get(":referralCode")
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     async getAllSales(@Param("referralCode") referralCode: string) {
       return await this.referralService.getSales(referralCode);
     }
