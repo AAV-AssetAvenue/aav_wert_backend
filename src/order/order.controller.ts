@@ -67,4 +67,12 @@ export class OrderController {
   wertWebhook(@Body() body: any) {
     return this.orderService.wertWebhook(body);
   }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.USER)
+  async claimSolUsdcCommission(@Req() req: Request) {
+    
+    return await this.orderService.claimSolUsdcCommission(req.user);
+  }
 }

@@ -24,17 +24,6 @@ export class CommissionsService {
         return record;
       }
 
-    //   async claimReferralCommission() {
-    //     try {
-    //       const signature = await this.transferToken(
-    //         order.user.walletAddress,
-    //         +aavAmount,
-    //         wallets.tokens[0].mint
-    //       );
-  
-    //     } catch (error) {
-         
-    //     }
-      
-    // }
+   
+    
 }

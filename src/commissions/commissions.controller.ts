@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CommissionsService } from './commissions.service';
 import { UserRoles } from 'src/mongoose/schemas/user.schema';
@@ -22,6 +22,10 @@ export class CommissionsController {
           
           return await this.commissionService.getVestedAAV(req.user);
         }
+
+
+
+
       
     
     }

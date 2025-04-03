@@ -19,6 +19,7 @@ import { createTransferInstruction } from "@solana/spl-token";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import { Transaction, Connection, PublicKey, Keypair } from "@solana/web3.js";
 import { CryptoOrder } from "src/mongoose/schemas/cryptoOrder.schema";
+import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.schema";
 
 @Injectable()
 export class OrderService {
@@ -27,6 +28,8 @@ export class OrderService {
   constructor(
     @InjectModel(Order.name) private OrderModel: Model<Order>,
     @InjectModel(CryptoOrder.name) private CryptoOrderModel: Model<CryptoOrder>,
+    @InjectModel(Commission.name) private commissionModel: Model<CommissionDocument>,
+    
     private authService: AuthService,
     private readonly httpService: HttpService,
     private readonly configService: ConfigService
@@ -429,6 +432,117 @@ export class OrderService {
     }
   }
 
+  async transferSol(
+    recipientAddress: string,
+    amount: number,
+  ) {
+    try {
+      const connection = new web3.Connection(
+        this.configService.get("solana.rpcUrl"),
+        "confirmed"
+      );
+
+      const fromKeypair = web3.Keypair.fromSecretKey(
+        bs58.decode(this.configService.get("solana.privateKey"))
+      );
+
+      // Check SOL balance first
+      const solBalance = await connection.getBalance(fromKeypair.publicKey);
+      console.log("🚀 ~ OrderService ~ solBalance:", solBalance);
+
+      if (solBalance < web3.LAMPORTS_PER_SOL * 0.01) {
+        // Ensure at least 0.01 SOL for fees
+        throw new Error("Insufficient SOL balance for transaction fees");
+      }
+
+      // Convert the recipient address to proper Solana address format
+      let recipientPublicKey;
+      try {
+        // Try to create PublicKey directly first
+        recipientPublicKey = new web3.PublicKey(recipientAddress);
+      } catch (error) {
+        // If direct creation fails, try to normalize the address
+        try {
+          const normalizedAddress = recipientAddress.toLowerCase();
+          recipientPublicKey = new web3.PublicKey(normalizedAddress);
+        } catch (innerError) {
+          throw new Error(
+            `Invalid recipient address format: ${recipientAddress}. Please provide a valid Solana address.`
+          );
+        }
+      }
+
+
+      const dummyTx = new Transaction().add(
+        web3.SystemProgram.transfer({
+          fromPubkey: fromKeypair.publicKey,
+          toPubkey: recipientPublicKey,
+          lamports: 1, // dummy amount
+        })
+      );
+    
+      dummyTx.feePayer = fromKeypair.publicKey;
+      const { blockhash } = await connection.getLatestBlockhash();
+      dummyTx.recentBlockhash = blockhash;
+    
+       // Estimate transaction fee before sending
+       const { value: fees } = await connection.getFeeForMessage(
+        dummyTx.compileMessage(),
+        "confirmed"
+      );
+    
+    
+
+      const amountLamports = web3.LAMPORTS_PER_SOL * amount; 
+
+      const adjustedLamports = amountLamports - fees;
+
+
+
+
+      const transaction = new Transaction().add(
+        web3.SystemProgram.transfer({
+          fromPubkey: fromKeypair.publicKey,
+          toPubkey: recipientPublicKey,
+          lamports:adjustedLamports
+        })
+      );      
+      
+      transaction.feePayer = fromKeypair.publicKey;
+      const blockHash = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockHash.blockhash;
+
+   
+
+      // Sign and send transaction
+      const signature = await web3.sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [fromKeypair],
+        {
+          skipPreflight: false,
+          preflightCommitment: "confirmed",
+          maxRetries: 5,
+        }
+      );
+
+      return {
+        signature,
+        transaction,
+      };
+    } catch (error) {
+      console.error("Transfer token error:", error);
+      // Add more detailed error information
+      const errorMessage = error?.message || "Failed to transfer token";
+      console.error("Full error details:", {
+        message: errorMessage,
+        logs: error?.logs,
+        errorCode: error?.code,
+      });
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   private getProvider() {
     const connection = new Connection(
       this.configService.get("solana.rpcUrl"),
@@ -755,4 +869,60 @@ export class OrderService {
       return null;
     }
   }
+
+
+  async claimSolUsdcCommission(user: UserDto) {
+    try {
+      const record = await this.commissionModel.findOne({ address:user.walletAddress });
+      if (!record) {
+        throw new HttpException("Commission record not found", HttpStatus.BAD_REQUEST);
+      }
+      const claimableUsdc = record.totalEarnedUSDC - record.totalClaimedUSDC; 
+      const claimableSol = record.totalEarnedSOL - record.totalClaimedSOL; 
+      
+      if(claimableSol == 0 && claimableUsdc == 0){
+        throw new HttpException("No commission to claim", HttpStatus.BAD_REQUEST);
+      }
+      if(claimableUsdc > 0){
+      const signature = await this.transferToken(
+        user.walletAddress,
+        Number(claimableUsdc) - 0.3, // subtract $0.3 as fees 
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" // mainnet usdc mint
+      );
+      if(signature.signature){
+        await this.commissionModel.updateOne(
+          { address:user.walletAddress },
+          { $set: { totalClaimedUSDC: record.totalClaimedUSDC + claimableUsdc } }
+        );
+     
+      }
+      }
+      if(claimableSol > 0){
+
+        const signature =  await this.transferSol(
+          user.walletAddress,
+          claimableSol
+        )
+        if(signature.signature){
+          await this.commissionModel.updateOne(
+            { address:user.walletAddress },
+            { $set: { totalClaimedSOL: record.totalClaimedSOL + claimableSol } }
+          );
+       
+        }
+      }
+
+
+    } catch (error) {
+      const errorMessage = error?.message || "Failed to transfer sol or usdc";
+      console.error("Full error details:", {
+        message: errorMessage,
+        logs: error?.logs,
+        errorCode: error?.code,
+      });
+      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+  
+}
 }
