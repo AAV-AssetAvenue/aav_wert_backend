@@ -55,7 +55,6 @@ export class ReferralService {
         eligible300Bonus: false,
         address: userRecord.walletAddress
       });
-      return
     }
 
     if (!commissionData.eligible300Bonus) {
