@@ -233,41 +233,7 @@ export class OrderService {
   }
 
 
-  async claimReferralCommission(payload: any) {
-   
-
-
-    
-      // const presaleInfo: any = await this.getPresaleInfo();
-      // if (!presaleInfo) {
-       
-      //   return;
-      // }
-
-      // let aavRate = Number(presaleInfo?.pricePerTokenInUsdc) / 1e6;
-      // if (isNaN(aavRate) || aavRate <= 0) {
-      
-      //   return;
-      // }
-
-      // const aavAmount = Number(usdtAmount / aavRate).toFixed(8);
-      // if (isNaN(Number(aavAmount)) || Number(aavAmount) <= 0) {
-       
-      //   return;
-      // }
-
-      // try {
-      //   const signature = await this.transferToken(
-      //     order.user.walletAddress,
-      //     +aavAmount,
-      //     wallets.tokens[0].mint
-      //   );
-
-      // } catch (error) {
-       
-      // }
-    
-  }
+ 
 
   async getWalletAssets() {
     try {

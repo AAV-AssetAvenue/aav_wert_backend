@@ -46,11 +46,11 @@ export class ReferralService {
       commissionData = await this.commissionModel.create({
         user: userRecord,
         referralCode: referralDto.referralCode,
-        totalEarnedUSDC: referralDto.usdAmount * 5 / 100,
+        totalEarnedUSDC: 0,
         totalClaimedUSDC: 0,
-        totalEarnedSOL: referralDto.solAmount * 5 / 100,
+        totalEarnedSOL: 0,
         totalClaimedSOL: 0,
-        totalEarnedAAV: 20,
+        totalEarnedAAV: 0,
         totalClaimedAAV: 0,
         eligible300Bonus: false,
         address: userRecord.walletAddress

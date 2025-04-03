@@ -23,4 +23,18 @@ export class CommissionsService {
         const record = await this.aavVestedModel.find({ address:user.walletAddress.toString()  });
         return record;
       }
+
+    //   async claimReferralCommission() {
+    //     try {
+    //       const signature = await this.transferToken(
+    //         order.user.walletAddress,
+    //         +aavAmount,
+    //         wallets.tokens[0].mint
+    //       );
+  
+    //     } catch (error) {
+         
+    //     }
+      
+    // }
 }
