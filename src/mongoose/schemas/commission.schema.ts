@@ -36,10 +36,6 @@ export class Commission {
   })
   totalClaimedAAV: number;
 
-  @Prop({
-    type: Number,
-  })
-  totalClaimableAAV: number;
 
 
 
@@ -53,10 +49,7 @@ export class Commission {
   })
   totalClaimedSOL: number;
 
-  @Prop({
-    type: Number,
-  })
-  totalClaimableSOL: number;
+
 
 
 
@@ -70,10 +63,6 @@ export class Commission {
   })
   totalClaimedUSDC: number;
 
-  @Prop({
-    type: Number,
-  })
-  totalClaimableUSDC: number;
   
   @Prop({
     type: String,

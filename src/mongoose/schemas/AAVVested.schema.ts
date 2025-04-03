@@ -37,6 +37,13 @@ export class AAVVested {
   })
   address: string;
 
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  claimed: boolean;
+
   
 
 }
