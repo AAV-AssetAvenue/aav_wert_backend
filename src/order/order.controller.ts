@@ -68,7 +68,7 @@ export class OrderController {
     return this.orderService.wertWebhook(body);
   }
 
-  @Post()
+  @Post("commissions/claim")
   @UseGuards(JwtAuthGuard)
   @Roles(UserRoles.USER)
   async claimSolUsdcCommission(@Req() req: Request) {
