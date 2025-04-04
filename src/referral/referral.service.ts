@@ -7,12 +7,14 @@ import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "src/mongoose/schemas/user.schema";
 import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.schema";
 import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
+import { Order, OrderDocument } from "src/mongoose/schemas/order.schema";
 
 @Injectable()
 export class ReferralService {
   constructor(
     @InjectModel(Referral.name) private referralModel: Model<ReferralDocument>,
     @InjectModel(CryptoOrder.name) private cryptoOrderModel: Model<CryptoOrderDocument>,
+    @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
     @InjectModel(Commission.name) private commissionModel: Model<CommissionDocument>,
     @InjectModel(AAVVested.name) private aAVVestedModel: Model<AAVVestedDocument>,
@@ -62,8 +64,12 @@ export class ReferralService {
         .findOne({ address: userRecord.walletAddress }) // Find by wallet address
         .sort({ createdAt: 1 }) // Sort by createdAt (oldest first)
         .exec();
+        const wertRecord = await this.orderModel
+        .findOne({ user: userRecord._id }) // Find by wallet address
+        .sort({ createdAt: 1 }) // Sort by createdAt (oldest first)
+        .exec();
 
-      if (referralDto.aavAmount >= record.aavAmount) {
+      if ((referralDto.aavAmount >= record.aavAmount) || (referralDto.aavAmount >= wertRecord.aavTransferAmount)) {
         commissionData.eligible300Bonus = true
         commissionData.totalEarnedAAV += record.aavAmount * 3
         await commissionData.save();

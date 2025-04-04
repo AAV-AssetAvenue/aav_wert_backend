@@ -8,12 +8,14 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { AuthModule } from "src/auth/auth.module";
 import { AAVVested, AAVVestedSchema } from "src/mongoose/schemas/AAVVested.schema";
 import { Commission, CommissionSchema } from "src/mongoose/schemas/commission.schema";
+import { Order, OrderSchema } from "src/mongoose/schemas/order.schema";
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Referral.name, schema: ReferralSchema },
       { name: CryptoOrder.name, schema: CryptoOrderSchema },
+      { name: Order.name, schema: OrderSchema },
       { name: User.name, schema: UserSchema },
       { name: Commission.name, schema: CommissionSchema },
       { name: AAVVested.name, schema: AAVVestedSchema },
