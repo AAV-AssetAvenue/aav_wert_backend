@@ -30,21 +30,11 @@ export class AAVVested {
   })
   vestingPeriod: number;
 
- 
-  
+
   @Prop({
     type: String,
   })
   address: string;
-
-
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  claimed: boolean;
-
-  
 
 }
 
