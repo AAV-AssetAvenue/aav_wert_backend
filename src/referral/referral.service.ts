@@ -170,22 +170,29 @@ export class ReferralService {
   
     for (const record of records) {
       const { AAVamount, vestingPeriod, createdAt } = record;
-  
+    
       if (!createdAt || !vestingPeriod) continue;
-  
+    
       const startTime = new Date(createdAt).getTime();
-      const endTime = Number(vestingPeriod); // in ms
-  
+      const endTime = Number(vestingPeriod); // timestamp when vesting ends
       const totalVestingDuration = endTime - startTime;
-      const timeElapsed = currentTime - startTime;
-  
-      if (timeElapsed <= 0) continue;
-  
-      // Clamp timeElapsed to totalVestingDuration
-      const effectiveElapsed = Math.min(timeElapsed, totalVestingDuration);
-  
-      const unlocked = (effectiveElapsed / totalVestingDuration) * AAVamount;
-  
+    
+      const totalVestingMonths = Math.ceil(totalVestingDuration / (30 * 24 * 60 * 60 * 1000)); // approx per month
+      const monthlyUnlock = AAVamount / totalVestingMonths;
+    
+      const now = new Date();
+      const created = new Date(createdAt);
+    
+      const fullMonthsElapsed =
+        (now.getFullYear() - created.getFullYear()) * 12 +
+        (now.getMonth() - created.getMonth());
+    
+      const effectiveMonths = Math.min(fullMonthsElapsed, totalVestingMonths);
+    
+      if (effectiveMonths <= 0) continue;
+    
+      const unlocked = effectiveMonths * monthlyUnlock;
+    
       totalUnlocked += unlocked;
     }
   
