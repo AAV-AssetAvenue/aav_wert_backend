@@ -36,6 +36,9 @@ export class AAVVested {
   })
   address: string;
 
+  createdAt?: Date;
+  updatedAt?: Date;
+
 }
 
 export const AAVVestedSchema = SchemaFactory.createForClass(AAVVested);

@@ -162,5 +162,40 @@ export class ReferralService {
     return record;
 
   }
+  async getClaimable(address: string){
+    const currentTime = Date.now();
+    const records = await this.aAVVestedModel.find({ address });
+  
+    let totalUnlocked = 0;
+  
+    for (const record of records) {
+      const { AAVamount, vestingPeriod, createdAt } = record;
+  
+      if (!createdAt || !vestingPeriod) continue;
+  
+      const startTime = new Date(createdAt).getTime();
+      const endTime = Number(vestingPeriod); // in ms
+  
+      const totalVestingDuration = endTime - startTime;
+      const timeElapsed = currentTime - startTime;
+  
+      if (timeElapsed <= 0) continue;
+  
+      // Clamp timeElapsed to totalVestingDuration
+      const effectiveElapsed = Math.min(timeElapsed, totalVestingDuration);
+  
+      const unlocked = (effectiveElapsed / totalVestingDuration) * AAVamount;
+  
+      totalUnlocked += unlocked;
+    }
+  
+   const commissionRecord = await this.commissionModel.findOne({ address });
+
+   const totalClaimed = commissionRecord?.totalClaimedAAV || 0;
+ 
+   const claimableNow = Math.max(totalUnlocked - totalClaimed, 0);
+ 
+   return claimableNow;
+  }
 
 }
