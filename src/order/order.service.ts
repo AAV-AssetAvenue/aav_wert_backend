@@ -21,7 +21,7 @@ import { Transaction, Connection, PublicKey, Keypair } from "@solana/web3.js";
 import { CryptoOrder } from "src/mongoose/schemas/cryptoOrder.schema";
 import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.schema";
 import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
-import { redlock } from 'src/redis/redLock';
+// import { redlock } from 'src/redis/redLock';
 
 @Injectable()
 export class OrderService {
@@ -875,10 +875,10 @@ export class OrderService {
 
 
   async claimSolUsdcCommission(user: UserDto) {
-    const lockKey = `lock:user:claim:${user.walletAddress}`;
-    let lock;
+    // const lockKey = `lock:user:claim:${user.walletAddress}`;
+    // let lock;
     try {
-      lock = await redlock.acquire([lockKey], 5000); // lock expires in 5s
+      // lock = await redlock.acquire([lockKey], 5000); // lock expires in 5s
 
       const record = await this.commissionModel.findOne({ address:user.walletAddress });
       if (!record) {
@@ -931,9 +931,9 @@ export class OrderService {
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 
     } finally {
-      if (lock) {
-        await lock.release().catch(() => {}); // Don't crash if lock already expired
-      }
+      // if (lock) {
+      //   await lock.release().catch(() => {}); // Don't crash if lock already expired
+      // }
     }
   
 }
@@ -975,10 +975,10 @@ async getClaimable(address: string){
  return totalUnlocked
 }
 async claimAAVCommission(user: UserDto) {
-  const lockKey = `lock:user:claim:${user.walletAddress}`;
-  let lock;
+  // const lockKey = `lock:user:claim:${user.walletAddress}`;
+  // let lock;
   try {
-    lock = await redlock.acquire([lockKey], 5000); // lock expires in 5s
+    // lock = await redlock.acquire([lockKey], 5000); // lock expires in 5s
 
     const totalUnlocked = await this.getClaimable(user.walletAddress);
     console.log("🚀 ~ OrderService ~ claimAAVCommission ~ totalUnlocked:", totalUnlocked);
@@ -1016,9 +1016,9 @@ async claimAAVCommission(user: UserDto) {
     throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 
   } finally {
-    if (lock) {
-      await lock.release().catch(() => {}); // Don't crash if lock already expired
-    }
+    // if (lock) {
+    //   await lock.release().catch(() => {}); // Don't crash if lock already expired
+    // }
   }
 
 }
