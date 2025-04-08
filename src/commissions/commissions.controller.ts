@@ -19,7 +19,6 @@ export class CommissionsController {
         @UseGuards(JwtAuthGuard)
         @Roles(UserRoles.USER)
         async getVestedAAV(@Req() req: Request) {
-          
           return await this.commissionService.getVestedAAV(req.user);
         }
 

@@ -71,8 +71,15 @@ export class OrderController {
   @Post("commissions/claim")
   @UseGuards(JwtAuthGuard)
   @Roles(UserRoles.USER)
-  async claimSolUsdcCommission(@Req() req: Request) {
+  async claimSolUsdcCommission(@Req() req: Request,@Body() body: any) {
     
     return await this.orderService.claimSolUsdcCommission(req.user);
+  }
+  @Post("commissions/claim/aav")
+  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.USER)
+  async claimAAVCommission(@Req() req: Request,@Body() body: any) {
+    
+    return await this.orderService.claimAAVCommission(req.user);
   }
 }

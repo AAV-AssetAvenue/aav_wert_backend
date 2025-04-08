@@ -8,7 +8,7 @@ import { User } from "src/mongoose/schemas/user.schema";
 import { Model } from "mongoose";
 
 @Injectable()
-export class AcessTokenStrategy extends PassportStrategy(Strategy) {
+export class AcessTokenStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(@InjectModel(User.name) private UserModel: Model<User>) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -21,7 +21,6 @@ export class AcessTokenStrategy extends PassportStrategy(Strategy) {
     const user = await this.UserModel.findOne({
       _id: payload.id,
     });
-
     if (!user) {
       return null;
     }

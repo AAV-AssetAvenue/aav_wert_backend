@@ -20,6 +20,7 @@ import { AnchorProvider, Program } from "@project-serum/anchor";
 import { Transaction, Connection, PublicKey, Keypair } from "@solana/web3.js";
 import { CryptoOrder } from "src/mongoose/schemas/cryptoOrder.schema";
 import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.schema";
+import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
 
 @Injectable()
 export class OrderService {
@@ -29,6 +30,7 @@ export class OrderService {
     @InjectModel(Order.name) private OrderModel: Model<Order>,
     @InjectModel(CryptoOrder.name) private CryptoOrderModel: Model<CryptoOrder>,
     @InjectModel(Commission.name) private commissionModel: Model<CommissionDocument>,
+    @InjectModel(AAVVested.name) private aAVVestedModel: Model<AAVVestedDocument>,
     
     private authService: AuthService,
     private readonly httpService: HttpService,
@@ -887,7 +889,8 @@ export class OrderService {
       const signature = await this.transferToken(
         user.walletAddress,
         Number(claimableUsdc) - 0.3, // subtract $0.3 as fees 
-        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" // mainnet usdc mint
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // mainnet usdc mint
+        // "4Fa3EWgea8bYwFjRdAxn9b7FhzFSYZR41Tnkn39SvSLX" // devnet usdc mint
       );
       if(signature.signature){
         await this.commissionModel.updateOne(
@@ -925,4 +928,82 @@ export class OrderService {
     }
   
 }
+
+
+async getClaimable(address: string){
+  const records = await this.aAVVestedModel.find({ address });
+
+  let totalUnlocked = 0;
+
+  for (const record of records) {
+    const { AAVamount, vestingPeriod, createdAt } = record;
+  
+    if (!createdAt || !vestingPeriod) continue;
+  
+    const startTime = new Date(createdAt).getTime();
+    const endTime = Number(vestingPeriod); // timestamp when vesting ends
+    const totalVestingDuration = endTime - startTime;
+  
+    const totalVestingMonths = Math.ceil(totalVestingDuration / (30 * 24 * 60 * 60 * 1000)); // approx per month
+    const monthlyUnlock = AAVamount / totalVestingMonths;
+  
+    const now = new Date();
+    const created = new Date(createdAt);
+  
+    const fullMonthsElapsed =
+      (now.getFullYear() - created.getFullYear()) * 12 +
+      (now.getMonth() - created.getMonth());
+  
+    const effectiveMonths = Math.min(fullMonthsElapsed, totalVestingMonths);
+  
+    if (effectiveMonths <= 0) continue;
+  
+    const unlocked = effectiveMonths * monthlyUnlock;
+  
+    totalUnlocked += unlocked;
+  }
+
+ return totalUnlocked
+}
+async claimAAVCommission(user: UserDto) {
+  try {
+    const totalUnlocked = await this.getClaimable(user.walletAddress);
+    console.log("🚀 ~ OrderService ~ claimAAVCommission ~ totalUnlocked:", totalUnlocked);
+    const commissionRecord = await this.commissionModel.findOne({ address:user.walletAddress });
+
+    const totalClaimed = commissionRecord?.totalClaimedAAV || 0;
+
+    const claimableAAV = Math.max(totalUnlocked - totalClaimed, 0);
+
+    const presaleInfo: any = await this.getPresaleInfo();
+    let aavRate = Number(presaleInfo?.pricePerTokenInUsdc) / 1e6;
+    if(claimableAAV > 0){
+    const signature = await this.transferToken(
+      user.walletAddress,
+      Number(claimableAAV) - (0.3/aavRate), // subtract $0.3 worth of aav as fees 
+      "AAVzPbhsinQk5jnTzsRrhftrjB6txyopdkqH8QmuGVo9", // mainnet aav mint
+      // "HtcmNSmpM6xGWLH7TcUiyjXQcej32qc15wyzawJYKNMn" // devnet aav mint
+    );
+    if(signature.signature){
+      await this.commissionModel.updateOne(
+        { address:user.walletAddress },
+        { $set: { totalClaimedAAV: commissionRecord.totalClaimedAAV + claimableAAV } }
+      );
+   
+    }
+  }
+
+  } catch (error) {
+    const errorMessage = error?.message || "Failed to transfer sol or usdc";
+    console.error("Full error details:", {
+      message: errorMessage,
+      logs: error?.logs,
+      errorCode: error?.code,
+    });
+    throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+
+  }
+
+}
+
 }

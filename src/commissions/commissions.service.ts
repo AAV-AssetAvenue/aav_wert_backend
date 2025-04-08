@@ -19,7 +19,6 @@ export class CommissionsService {
         return record;
       }
       async getVestedAAV(user: UserDto){
-        console.log("user.walletAddress -----------",user.walletAddress)
         const record = await this.aavVestedModel.find({ address:user.walletAddress.toString()  });
         return record;
       }

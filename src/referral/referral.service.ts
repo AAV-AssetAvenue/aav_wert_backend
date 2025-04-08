@@ -163,7 +163,6 @@ export class ReferralService {
 
   }
   async getClaimable(address: string){
-    const currentTime = Date.now();
     const records = await this.aAVVestedModel.find({ address });
   
     let totalUnlocked = 0;
@@ -195,6 +194,8 @@ export class ReferralService {
     
       totalUnlocked += unlocked;
     }
+
+    console.log("totalUnlocked--------",totalUnlocked)
   
    const commissionRecord = await this.commissionModel.findOne({ address });
 
