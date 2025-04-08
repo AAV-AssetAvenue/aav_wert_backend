@@ -17,7 +17,8 @@ export class AcessTokenStrategy extends PassportStrategy(Strategy, "jwt") {
     });
   }
 
-  async validate(payload: UserTokenDto) {
+  // when authentication is successful, whatever you return from validate() becomes req.user.
+  async validate(payload: UserTokenDto) { 
     const user = await this.UserModel.findOne({
       _id: payload.id,
     });
@@ -27,6 +28,6 @@ export class AcessTokenStrategy extends PassportStrategy(Strategy, "jwt") {
 
     user.refreshToken = "";
 
-    return user;
+    return user; // req.user
   }
 }
