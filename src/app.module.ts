@@ -22,9 +22,13 @@ import { StakingModule } from "./staking/staking.module";
 import { UserKycModule } from "./userKyc/userKyc.module";
 import { ReferralModule } from "./referral/referral.module";
 import { CommissionsModule } from './commissions/commissions.module';
+import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],

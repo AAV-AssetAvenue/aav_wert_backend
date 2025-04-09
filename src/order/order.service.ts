@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { CreateOrderDto, CryptoOrderDTO } from "./dto";
 import { InjectModel } from "@nestjs/mongoose";
 import {
@@ -21,13 +21,14 @@ import { Transaction, Connection, PublicKey, Keypair } from "@solana/web3.js";
 import { CryptoOrder } from "src/mongoose/schemas/cryptoOrder.schema";
 import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.schema";
 import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
-// import { redlock } from 'src/redis/redLock';
-
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 @Injectable()
 export class OrderService {
   private pricesHelper: PricesHelper;
   private solanaHelper: SolanaHelper;
   constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @InjectModel(Order.name) private OrderModel: Model<Order>,
     @InjectModel(CryptoOrder.name) private CryptoOrderModel: Model<CryptoOrder>,
     @InjectModel(Commission.name) private commissionModel: Model<CommissionDocument>,
@@ -875,11 +876,12 @@ export class OrderService {
 
 
   async claimSolUsdcCommission(user: UserDto) {
-    // const lockKey = `lock:user:claim:${user.walletAddress}`;
-    // let lock;
+    const lockKey = `lock:user:claim:${user.walletAddress}`;
     try {
-      // lock = await redlock.acquire([lockKey], 5000); // lock expires in 5s
-
+      if(await this.cacheManager.get(lockKey) == true){
+        throw new HttpException("Already processing claim", HttpStatus.BAD_REQUEST);
+      }
+      await this.cacheManager.set(lockKey, true); 
       const record = await this.commissionModel.findOne({ address:user.walletAddress });
       if (!record) {
         throw new HttpException("Commission record not found", HttpStatus.BAD_REQUEST);
@@ -931,9 +933,7 @@ export class OrderService {
       throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 
     } finally {
-      // if (lock) {
-      //   await lock.release().catch(() => {}); // Don't crash if lock already expired
-      // }
+        await this.cacheManager.del(lockKey) 
     }
   
 }
@@ -975,10 +975,12 @@ async getClaimable(address: string){
  return totalUnlocked
 }
 async claimAAVCommission(user: UserDto) {
-  // const lockKey = `lock:user:claim:${user.walletAddress}`;
-  // let lock;
+  const lockKey = `lock:user:claim:${user.walletAddress}`;
   try {
-    // lock = await redlock.acquire([lockKey], 5000); // lock expires in 5s
+    if(await this.cacheManager.get(lockKey) == true){
+      throw new HttpException("Already processing claim", HttpStatus.BAD_REQUEST);
+    }
+    await this.cacheManager.set(lockKey, true); 
 
     const totalUnlocked = await this.getClaimable(user.walletAddress);
     console.log("🚀 ~ OrderService ~ claimAAVCommission ~ totalUnlocked:", totalUnlocked);
@@ -1016,9 +1018,7 @@ async claimAAVCommission(user: UserDto) {
     throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 
   } finally {
-    // if (lock) {
-    //   await lock.release().catch(() => {}); // Don't crash if lock already expired
-    // }
+    await this.cacheManager.del(lockKey) 
   }
 
 }
