@@ -67,6 +67,8 @@ export class Commission {
   @Prop({
     type: String,
     required: true,
+    unique: true,
+    trim: true,
   })
   address: string;
 
