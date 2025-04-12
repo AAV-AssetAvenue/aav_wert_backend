@@ -43,11 +43,11 @@ export class ReferralService {
     if (refereeRecord?.referralCode === referralDto.referralCode) {
       throw new BadRequestException('can not referral your self')
     }
-    let commissionData = await this.commissionModel.findOne({ referralCode: referralDto.referralCode });
+
+    let commissionData = await this.commissionModel.findOne({ address:userRecord.walletAddress });
     if (!commissionData) {
       commissionData = await this.commissionModel.create({
-        user: userRecord,
-        referralCode: referralDto.referralCode,
+        user: userRecord._id,
         totalEarnedUSDC: 0,
         totalClaimedUSDC: 0,
         totalEarnedSOL: 0,

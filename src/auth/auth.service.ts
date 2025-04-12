@@ -6,11 +6,16 @@ import { InjectModel } from "@nestjs/mongoose";
 import { User } from "src/mongoose/schemas/user.schema";
 import { Document, Model, Types } from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
+import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.schema";
+import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
 
 @Injectable({})
 export class AuthService {
   constructor(
     @InjectModel(User.name) private UserModel: Model<User>,
+    @InjectModel(Commission.name) private commissionModel: Model<CommissionDocument>,
+    @InjectModel(AAVVested.name) private aAVVestedModel: Model<AAVVestedDocument>,
+    
     private jwtService: JwtService
   ) {}
   async signup(payload: SignupDto) {
@@ -25,13 +30,43 @@ export class AuthService {
       });
       if(referralCodeUsed){
         referralCode = uuidv4().split('-')[0].toUpperCase(); 
-
       }
+
       if (existingUser) {
         if(!existingUser?.referralCode){
           existingUser.referralCode = referralCode;
         }
         await existingUser.save()
+
+        let commissionData = await this.commissionModel.findOne({ address: existingUser.walletAddress});
+        if (!commissionData) {
+          const totalAAV = await this.aAVVestedModel.aggregate([
+            {
+              $match: {
+                address: existingUser.walletAddress,
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                totalAAV: { $sum: "$AAVamount" }
+              }
+            }
+          ])
+          commissionData = await this.commissionModel.create({
+            user: existingUser._id,
+            totalEarnedUSDC: 0,
+            totalClaimedUSDC: 0,
+            totalEarnedSOL: 0,
+            totalClaimedSOL: 0,
+            totalEarnedAAV: totalAAV[0]?.totalAAV || 0,
+            totalClaimedAAV: 0,
+            eligible300Bonus: false,
+            address: existingUser.walletAddress
+          });
+        }
+
+
         const tokens = this.generateJwtTokens(existingUser);
         return {
           ...tokens,
@@ -42,7 +77,34 @@ export class AuthService {
         walletAddress: payload.walletAddress,
         referralCode:referralCode
       });
-
+      let commissionData = await this.commissionModel.findOne({ address: user.walletAddress});
+      if (!commissionData) {
+        const totalAAV = await this.aAVVestedModel.aggregate([
+          {
+            $match: {
+              address: user.walletAddress,
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              totalAAV: { $sum: "$AAVamount" }
+            }
+          }
+        ])
+        commissionData = await this.commissionModel.create({
+          user: user._id,
+          totalEarnedUSDC: 0,
+          totalClaimedUSDC: 0,
+          totalEarnedSOL: 0,
+          totalClaimedSOL: 0,
+          totalEarnedAAV: totalAAV[0]?.totalAAV || 0,
+          totalClaimedAAV: 0,
+          eligible300Bonus: false,
+          address: user.walletAddress
+        });
+        
+      }
       const tokens = this.generateJwtTokens(user);
 
       await this.updateRefreshToken(user.id, tokens.refresh_token);
