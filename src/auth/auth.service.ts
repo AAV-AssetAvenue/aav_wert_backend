@@ -35,10 +35,10 @@ export class AuthService {
       if (existingUser) {
         if(!existingUser?.referralCode){
           existingUser.referralCode = referralCode;
+          await existingUser.save()
         }
-        await existingUser.save()
 
-        let commissionData = await this.commissionModel.findOne({ address: payload.walletAddress});
+        let commissionData = await this.commissionModel.findOne({ user:existingUser._id});
         if (!commissionData) {
           const totalAAV = await this.aAVVestedModel.aggregate([
             {
@@ -53,7 +53,7 @@ export class AuthService {
               }
             }
           ])
-          commissionData = await this.commissionModel.create({
+          await this.commissionModel.create({
             user: existingUser._id,
             totalEarnedUSDC: 0,
             totalClaimedUSDC: 0,
@@ -77,8 +77,6 @@ export class AuthService {
         walletAddress: payload.walletAddress,
         referralCode:referralCode
       });
-      let commissionData = await this.commissionModel.findOne({ address: payload.walletAddress});
-      if (!commissionData) {
         const totalAAV = await this.aAVVestedModel.aggregate([
           {
             $match: {
@@ -92,7 +90,7 @@ export class AuthService {
             }
           }
         ])
-        commissionData = await this.commissionModel.create({
+        await this.commissionModel.create({
           user: user._id,
           totalEarnedUSDC: 0,
           totalClaimedUSDC: 0,
@@ -104,7 +102,6 @@ export class AuthService {
           address: payload.walletAddress
         });
         
-      }
       const tokens = this.generateJwtTokens(user);
 
       await this.updateRefreshToken(user.id, tokens.refresh_token);
