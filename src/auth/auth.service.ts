@@ -38,12 +38,12 @@ export class AuthService {
         }
         await existingUser.save()
 
-        let commissionData = await this.commissionModel.findOne({ address: existingUser.walletAddress});
+        let commissionData = await this.commissionModel.findOne({ address: payload.walletAddress});
         if (!commissionData) {
           const totalAAV = await this.aAVVestedModel.aggregate([
             {
               $match: {
-                address: existingUser.walletAddress,
+                address: payload.walletAddress,
               }
             },
             {
@@ -62,7 +62,7 @@ export class AuthService {
             totalEarnedAAV: totalAAV[0]?.totalAAV || 0,
             totalClaimedAAV: 0,
             eligible300Bonus: false,
-            address: existingUser.walletAddress
+            address: payload.walletAddress
           });
         }
 
@@ -77,12 +77,12 @@ export class AuthService {
         walletAddress: payload.walletAddress,
         referralCode:referralCode
       });
-      let commissionData = await this.commissionModel.findOne({ address: user.walletAddress});
+      let commissionData = await this.commissionModel.findOne({ address: payload.walletAddress});
       if (!commissionData) {
         const totalAAV = await this.aAVVestedModel.aggregate([
           {
             $match: {
-              address: user.walletAddress,
+              address: payload.walletAddress,
             }
           },
           {
@@ -101,7 +101,7 @@ export class AuthService {
           totalEarnedAAV: totalAAV[0]?.totalAAV || 0,
           totalClaimedAAV: 0,
           eligible300Bonus: false,
-          address: user.walletAddress
+          address: payload.walletAddress
         });
         
       }

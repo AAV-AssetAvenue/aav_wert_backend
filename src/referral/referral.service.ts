@@ -21,7 +21,7 @@ export class ReferralService {
 
   ) { }
 
-  // Create KYC record
+  
   async createReferral(referralDto: ReferralDTO) {
     const existingTxHash = await this.referralModel.findOne({ txHash: referralDto.txHash });
     if (existingTxHash) {
