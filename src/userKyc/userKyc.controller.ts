@@ -53,7 +53,7 @@ export class UserKycController {
 
   // Get KYC record by ID
   @Get(":walletAddress")
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param("walletAddress") walletAddress: string) {
     return await this.userKycService.getKYCById(walletAddress);
   }

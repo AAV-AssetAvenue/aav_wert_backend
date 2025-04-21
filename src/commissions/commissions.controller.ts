@@ -11,7 +11,7 @@ export class CommissionsController {
       constructor(private readonly commissionService: CommissionsService) {}
           
         @Get(":address")
-        // @UseGuards(JwtAuthGuard)
+        @UseGuards(JwtAuthGuard)
         async getCommissionData(@Param("address") address: string) {
           return await this.commissionService.getCommissionData(address);
         }

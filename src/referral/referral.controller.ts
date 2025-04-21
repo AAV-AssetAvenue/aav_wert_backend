@@ -24,13 +24,13 @@ export class ReferralController {
   }
 
   @Get("claimableAAV/:address")
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getClaimable(@Param("address") address: string) {
     return await this.referralService.getClaimable(address);
   }
 
   @Get(":referralCode")
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getAllSales(@Param("referralCode") referralCode: string) {
     return await this.referralService.getSales(referralCode);
   }
