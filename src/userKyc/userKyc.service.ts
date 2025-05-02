@@ -23,11 +23,7 @@ export class UserKycService {
       throw new BadRequestException("KYC record for this email already exists.");
     }
     const user = await this.userModel.findOne({ walletAddress: data.walletAddress });
-    if(data.bankType == "nonEuropean"){
-      if(!data.bic){
-        throw new BadRequestException("BIC is required for non-European bank accounts");
-    }
-  }
+   
     const newKyc = await this.userKycModel.create({
       user:user._id,
       email: data.email,
