@@ -45,7 +45,6 @@ export class UsersKYC {
   idNumber: string;
   @Prop({
     type: String,
-    required: true,
   })
   bank: string;
   @Prop({
