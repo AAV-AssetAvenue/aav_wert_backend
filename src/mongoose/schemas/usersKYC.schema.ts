@@ -50,12 +50,10 @@ export class UsersKYC {
   bank: string;
   @Prop({
     type: String,
-    required: true,
   })
   bankType: string;
   @Prop({
     type: String,
-    required: true,
   })
   bankAccount: string;
   @Prop({

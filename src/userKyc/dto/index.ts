@@ -7,10 +7,10 @@ export const UserKycSchema = z.object({
     idType: z.string(),
     idNumber: z.string(),
  
-    bank: z.string(),
-    bankAccount: z.string(),
+    bank: z.string().optional(),
+    bankAccount: z.string().optional(),
     bic: z.string().optional(),
-    bankType: z.string(),
+    bankType: z.string().optional(),
 
     walletAddress: z.string(),
 });
