@@ -68,6 +68,11 @@ export class OrderController {
     return this.orderService.wertWebhook(body);
   }
 
+  @Get("wert/session")
+  wertSession() {
+    return this.orderService.wertSession();
+  }
+
   @Post("commissions/claim")
   @UseGuards(JwtAuthGuard)
   @Roles(UserRoles.USER)

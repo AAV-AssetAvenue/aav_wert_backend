@@ -23,6 +23,12 @@ import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.
 import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
+
+
+type WertSessionResponse  = {
+  "requestId": string,
+  "sessionId": string
+}
 @Injectable()
 export class OrderService {
   private pricesHelper: PricesHelper;
@@ -239,7 +245,30 @@ export class OrderService {
     }
   }
 
-
+  async wertSession() {
+    try{
+    const response = await fetch("https://partner.wert.io/api/external/hpp/create-session", {
+      method: "POST",
+      headers: {
+        "X-Api-Key": process.env.WERT_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        flow_type: "simple" // flow_type is always required
+      })
+    })
+     
+     if (!response.ok) {
+      throw new Error("Failed to create Wert session");
+    }
+    const data = await response.json() as   WertSessionResponse
+     return data?.sessionId
+  }catch (error) {
+    throw new HttpException(
+      error?.message || "OrderService ~ wertSession ~ error",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );  }
+  }
  
 
   async getWalletAssets() {
