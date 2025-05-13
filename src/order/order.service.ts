@@ -245,7 +245,7 @@ export class OrderService {
     }
   }
 
-  async wertSession() {
+  async wertSession(body:any) {
     try{
     const response = await fetch("https://partner.wert.io/api/external/hpp/create-session", {
       method: "POST",
@@ -254,7 +254,12 @@ export class OrderService {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        flow_type: "simple" // flow_type is always required
+          flow_type: "simple_full_restrict",
+          wallet_address: body?.walletAddress,
+          currency: "USD",
+          commodity: "ETH",
+          network: "ethereum",
+          currency_amount: body?.currencyAmount,
       })
     })
     

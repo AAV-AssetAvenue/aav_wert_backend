@@ -68,9 +68,9 @@ export class OrderController {
     return this.orderService.wertWebhook(body);
   }
 
-  @Get("wert/session")
-  wertSession() {
-    return this.orderService.wertSession();
+  @Post("wert/session")
+  wertSession(@Body() body: any) {
+    return this.orderService.wertSession(body);
   }
 
   @Post("commissions/claim")
