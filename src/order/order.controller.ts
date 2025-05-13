@@ -69,7 +69,7 @@ export class OrderController {
   }
 
   @Post("wert/session")
-  wertSession(@Body() body: any) {
+  wertSession(@Body() body: {walletAddress: string,currencyAmount:number}) {
     return this.orderService.wertSession(body);
   }
 
