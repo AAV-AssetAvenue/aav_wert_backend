@@ -257,6 +257,7 @@ export class OrderService {
         flow_type: "simple" // flow_type is always required
       })
     })
+    
      
      if (!response.ok) {
       throw new Error("Failed to create Wert session");
