@@ -39,8 +39,7 @@ export class ReferralService {
 
 
     const userRecord = await this.UserModel.findOne({ referralCode: referralDto.referralCode });
-    const refereeRecord = await this.UserModel.findOne({ walletAddress: referralDto.address });
-    if (refereeRecord?.referralCode === referralDto.referralCode) {
+    if (userRecord.walletAddress === referralDto.address) {
       throw new BadRequestException('can not referral your self')
     }
 
@@ -69,7 +68,7 @@ export class ReferralService {
         .sort({ createdAt: 1 }) // Sort by createdAt (oldest first)
         .exec();
 
-      if ((referralDto.aavAmount >= record.aavAmount) || (referralDto.aavAmount >= wertRecord.aavTransferAmount)) {
+      if ((Number(referralDto.aavAmount) >= Number(record.aavAmount)) || (Number(referralDto.aavAmount) >= Number(wertRecord.aavTransferAmount))) {
         commissionData.eligible300Bonus = true
         commissionData.totalEarnedAAV += record.aavAmount * 3
         await commissionData.save();

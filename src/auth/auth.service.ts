@@ -31,13 +31,16 @@ export class AuthService {
       if(referralCodeUsed){
         referralCode = uuidv4().split('-')[0].toUpperCase(); 
       }
-
+      // If user exist, 
       if (existingUser) {
+        // check if the user has already a referral code
+        // if the user has a referral code, do not update it
         if(!existingUser?.referralCode){
           existingUser.referralCode = referralCode;
           await existingUser.save()
         }
-
+        // check if the user has already a commission data
+        // if the user has a commission data, do not create it again
         let commissionData = await this.commissionModel.findOne({ user:existingUser._id});
         if (!commissionData) {
           const totalAAV = await this.aAVVestedModel.aggregate([
@@ -73,6 +76,7 @@ export class AuthService {
         };
       }
 
+      // else user did not exist, create new user
       const user = await this.create({
         walletAddress: payload.walletAddress,
         referralCode:referralCode

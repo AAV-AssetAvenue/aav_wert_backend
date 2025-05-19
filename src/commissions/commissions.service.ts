@@ -22,7 +22,4 @@ export class CommissionsService {
         const record = await this.aavVestedModel.find({ address:user.walletAddress.toString()  });
         return record;
       }
-
-   
-    
 }
