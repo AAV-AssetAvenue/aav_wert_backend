@@ -15,7 +15,7 @@ export class AAVVested {
         type: String,
     
       })  
-      referralCode?: string;
+      referralCode: string;
 
 
 
