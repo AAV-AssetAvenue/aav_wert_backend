@@ -85,6 +85,18 @@ export class OrderService {
         currency:cryptoOrderDto.currency,
         address:existingUser.walletAddress
       })
+      
+      // 3x AAv bonus on each purchase, vested for 48 months
+      const currentDate = new Date();
+      const vestingEndDate = new Date();
+      vestingEndDate.setMonth(currentDate.getMonth() + 48);
+
+      await this.aAVVestedModel.create({
+        referralCode: existingUser.referralCode,
+        AAVamount: Number(cryptoOrderDto.aavAmount) * 3,
+        address: existingUser.walletAddress,
+        vestingPeriod: vestingEndDate.getTime()
+      })
 
       return order;
     } catch (error) {
@@ -235,6 +247,19 @@ export class OrderService {
           aavTransferAmount: aavAmount,
           aavTransferFee: signature.estimatedFee,
         });
+
+      // 3x AAv bonus on each purchase, vested for 48 months
+      const currentDate = new Date();
+      const vestingEndDate = new Date();
+      vestingEndDate.setMonth(currentDate.getMonth() + 48);
+
+      await this.aAVVestedModel.create({
+        referralCode: order.user.referralCode,
+        AAVamount: Number(aavAmount) * 3,
+        address: order.user.walletAddress,
+        vestingPeriod: vestingEndDate.getTime()
+      })
+
       } catch (error) {
         await this.update(order._id, {
           aavTransferStatus: AavTransferStatus.FAILED,
