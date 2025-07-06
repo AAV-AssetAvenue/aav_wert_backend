@@ -1,12 +1,10 @@
 import { S3Client } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
-import * as multer from "multer";
 import * as multerS3 from "multer-s3";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
-// ✅ Fix: Correctly initialize the S3 Client
+// initialize the S3 Client
 const s3 = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -17,7 +15,7 @@ const s3 = new S3Client({
 
 export const multerOptions = {
   storage: multerS3({
-    s3, // ✅ Use S3Client instead of `new S3()`
+    s3, // S3Client instead
     bucket: process.env.AWS_S3_BUCKET!,
     // acl: "public-read",
     key: (req, file, cb) => {

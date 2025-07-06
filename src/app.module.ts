@@ -23,6 +23,7 @@ import { UserKycModule } from "./userKyc/userKyc.module";
 import { ReferralModule } from "./referral/referral.module";
 import { CommissionsModule } from './commissions/commissions.module';
 import { CacheModule } from "@nestjs/cache-manager";
+import { NewsModule } from './news/news.module';
 
 @Module({
   imports: [
@@ -66,7 +67,8 @@ import { CacheModule } from "@nestjs/cache-manager";
     StakingModule,
     UserKycModule,
     ReferralModule,
-    CommissionsModule
+    CommissionsModule,
+    NewsModule
   ],
   controllers: [AppController],
   providers: [AppService],
