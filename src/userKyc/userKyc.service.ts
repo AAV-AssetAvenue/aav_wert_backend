@@ -2,13 +2,13 @@ import { Injectable, NotFoundException, BadRequestException } from "@nestjs/comm
 import { UserKycDTO, UserUpdateKycDTO } from "./dto";
 import { UsersKYC, UsersKYCDocument } from "src/mongoose/schemas/usersKYC.schema";
 import { User, UserDocument } from "src/mongoose/schemas/user.schema";
-import { Model } from "mongoose";
+import { Model, PaginateModel } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
 export class UserKycService {
   constructor(
-    @InjectModel(UsersKYC.name) private userKycModel: Model<UsersKYCDocument>,
+    @InjectModel(UsersKYC.name) private userKycModel: PaginateModel<UsersKYCDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>
   ) {}
 
@@ -42,11 +42,15 @@ export class UserKycService {
     return newKyc
   }
 
-  // Get all KYC records (with pagination)
   async getAllKYC(page: number = 1, limit: number = 10) {
-    return await this.userKycModel.find({}, { page, limit });
-  }
-
+  return await this.userKycModel.paginate({}, {
+    page,
+    limit,
+    populate: "user", // optional: if you want user details populated
+    lean: true,
+    sort: { createdAt: -1 }, // optional: latest first
+  });
+}
   // Get KYC record by ID
   async getKYCById(walletAddress: string): Promise<UsersKYC> {
     const record = await this.userKycModel.findOne({walletAddress:walletAddress});
