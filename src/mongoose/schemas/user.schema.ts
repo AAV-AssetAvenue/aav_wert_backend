@@ -39,6 +39,12 @@ export class User {
 
 
 
+ @Prop({
+    type: String,
+  })  
+  nonce: string;
+
+
 
 }
 

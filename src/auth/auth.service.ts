@@ -8,7 +8,9 @@ import { Document, Model, Types } from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 import { Commission, CommissionDocument } from "src/mongoose/schemas/commission.schema";
 import { AAVVested, AAVVestedDocument } from "src/mongoose/schemas/AAVVested.schema";
-
+import { PublicKey } from "@solana/web3.js";
+import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes";
+import * as nacl from 'tweetnacl';
 @Injectable({})
 export class AuthService {
   constructor(
@@ -23,6 +25,11 @@ export class AuthService {
       const existingUser = await this.findOne({
         walletAddress: payload.walletAddress,
       });
+      const isVerified = this.verifySignature(existingUser.nonce, payload.signature, payload.walletAddress);
+      if(!isVerified){
+        throw new HttpException("Signature verification failed", HttpStatus.BAD_REQUEST);
+      }
+      const nonce = `Login request \n At : ${new Date().toISOString()} \n By : ${payload.walletAddress}`;
 
       let referralCode = uuidv4().split('-')[0].toUpperCase(); 
       const referralCodeUsed = await this.findOne({
@@ -33,12 +40,13 @@ export class AuthService {
       }
       // If user exist, 
       if (existingUser) {
+        existingUser.nonce = nonce;
         // check if the user has already a referral code
         // if the user has a referral code, do not update it
         if(!existingUser?.referralCode){
           existingUser.referralCode = referralCode;
-          await existingUser.save()
         }
+        await existingUser.save()
         // check if the user has already a commission data
         // if the user has a commission data, do not create it again
         let commissionData = await this.commissionModel.findOne({ user:existingUser._id});
@@ -79,7 +87,8 @@ export class AuthService {
       // else user did not exist, create new user
       const user = await this.create({
         walletAddress: payload.walletAddress,
-        referralCode:referralCode
+        referralCode:referralCode,
+        nonce
       });
         const totalAAV = await this.aAVVestedModel.aggregate([
           {
@@ -209,17 +218,16 @@ export class AuthService {
     return await this.UserModel.findOne(payload);
   }
 
-  async findMe(payload: any) {
+  async findMe(publicKey:string) {
     try {
-      const user = await this.UserModel.findById(payload.id);
+      const user = await this.UserModel.findOne({walletAddress:publicKey});
 
       if (!user) {
         throw new HttpException("user not found", HttpStatus.FORBIDDEN);
       }
 
       return {
-        id: user._id,
-        walletAddress: user.walletAddress,
+        user
       };
     } catch (error) {
       throw new HttpException(
@@ -232,4 +240,15 @@ export class AuthService {
   async create(payload: any) {
     return await this.UserModel.create(payload);
   }
+
+  verifySignature (message:string, signature:string, publicKey:string):boolean {
+    const messageBytes = new TextEncoder().encode(message);
+    const signatureBytes = bs58.decode(signature);
+    const pubKeyBytes = new PublicKey(publicKey).toBytes();
+          console.log("here i am")
+
+    return nacl.sign.detached.verify(messageBytes, signatureBytes, pubKeyBytes);
+  };
+
+
 }
