@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   UseGuards,
@@ -38,10 +39,8 @@ export class AuthController {
     return this.authService.refreshToken(body);
   }
 
-  @Get("me")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoles.USER)
-  findme(@Req() req: Request) {
-    return this.authService.findMe(req.user);
+  @Get("me/:walletAddress")
+  findme(@Param("walletAddress") walletAddress: string) {
+    return this.authService.findMe(walletAddress);
   }
 }

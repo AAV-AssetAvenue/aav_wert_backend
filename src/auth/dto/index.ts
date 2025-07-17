@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const SignupSchema = z.object({
   walletAddress: z.string(),
+  signature:z.string(),
 });
 
 export const UserTokenSchema = z.object({
