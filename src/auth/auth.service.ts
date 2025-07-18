@@ -25,10 +25,17 @@ export class AuthService {
       const existingUser = await this.findOne({
         walletAddress: payload.walletAddress,
       });
+      if (existingUser) {
       const isVerified = this.verifySignature(existingUser.nonce, payload.signature, payload.walletAddress);
       if(!isVerified){
         throw new HttpException("Signature verification failed", HttpStatus.BAD_REQUEST);
       }
+    }else{
+        const isVerified = this.verifySignature("Login request", payload.signature, payload.walletAddress);
+      if(!isVerified){
+        throw new HttpException("Signature verification failed", HttpStatus.BAD_REQUEST);
+      }
+    }
       const nonce = `Login request \n At : ${new Date().toISOString()} \n By : ${payload.walletAddress}`;
 
       let referralCode = uuidv4().split('-')[0].toUpperCase(); 
