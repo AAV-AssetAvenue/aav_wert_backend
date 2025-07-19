@@ -30,6 +30,7 @@ export async function getSignedS3Url(key: string): Promise<string> {
     Bucket: process.env.AWS_S3_BUCKET!,
     Key: key,
     ResponseContentDisposition: "inline", 
+    ResponseContentType: "image/png" 
   });
 
   const url = await getSignedUrl(s3, command, { expiresIn: 60 * 5 }); // 5 minutes
