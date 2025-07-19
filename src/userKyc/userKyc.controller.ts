@@ -19,6 +19,7 @@ import { ZodValidationPipe } from "src/zode.validation.pipe";
 import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { multerOptions } from "src/config/multer-config";
+import { getSignedS3Url } from "src/helpers/getSignedS3Url";
 
 @Controller("userKyc")
 export class UserKycController {
@@ -57,6 +58,12 @@ export class UserKycController {
   async findOne(@Param("walletAddress") walletAddress: string) {
     return await this.userKycService.getKYCById(walletAddress);
   }
+
+  @Get('files/:key')
+async getSignedUrl(@Param('key') key: string) {
+  const url = await getSignedS3Url(`uploads/${key}`);
+  return { url };
+}
 
   // Update KYC record by ID
   @Patch(":walletAddress")
