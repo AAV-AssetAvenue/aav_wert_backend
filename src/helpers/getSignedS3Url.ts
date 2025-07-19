@@ -29,6 +29,7 @@ export async function getSignedS3Url(key: string): Promise<string> {
   const command = new GetObjectCommand({
     Bucket: process.env.AWS_S3_BUCKET!,
     Key: key,
+    ResponseContentDisposition: "inline", 
   });
 
   const url = await getSignedUrl(s3, command, { expiresIn: 60 * 5 }); // 5 minutes
