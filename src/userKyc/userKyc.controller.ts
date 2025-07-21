@@ -23,6 +23,7 @@ import { getSignedS3Url } from "src/helpers/getSignedS3Url";
 import { RolesGuard } from "src/auth/guards/roles.guard";
 import { UserRoles } from "src/mongoose/schemas/user.schema";
 import { Roles } from "src/decorators/roles.decorator";
+import { KycStatusType } from "src/mongoose/schemas/usersKYC.schema";
 
 @Controller("userKyc")
 export class UserKycController {
@@ -74,10 +75,9 @@ export class UserKycController {
     return { url };
   }
 
-  // Update KYC record by ID
+  // user Update KYC record by ID
   @Patch(":walletAddress")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
+  @UseGuards(JwtAuthGuard)
   // @UsePipes(new ZodValidationPipe(UserUpdateKycSchema.partial()))
   async update(@Param("walletAddress") walletAddress: string, @Body() data: Partial<UserUpdateKycDTO>) {
     return await this.userKycService.updateKYC(walletAddress, data);
@@ -90,4 +90,14 @@ export class UserKycController {
   async remove(@Param("id") id: string) {
     return await this.userKycService.deleteKYC(id);
   }
+
+
+   // admin Update KYC status
+  @Patch("updateStatus/:walletAddress")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoles.ADMIN)
+  async update_kyc_status(@Param("walletAddress") walletAddress: string, @Body() data:{kycStatus:KycStatusType}) {
+    return await this.userKycService.updateKYCStatus(walletAddress, data.kycStatus);
+  }
+
 }

@@ -4,7 +4,8 @@ import * as mongoosePaginate from "mongoose-paginate-v2";
 import { User } from "./user.schema";
 
 export type UsersKYCDocument = HydratedDocument<UsersKYC>;
- enum KycStatus {
+export type KycStatusType = "pending" | "approved" | "rejected"
+  enum KycStatus {
   NOT_SUBMITTED = "not_submitted",
   PENDING = "pending",
   APPROVED = "approved",

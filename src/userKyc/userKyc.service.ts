@@ -59,8 +59,7 @@ export class UserKycService {
     }
     return record;
   }
-
-  // Update KYC record by ID
+ // Update KYC record by ID
   async updateKYC(walletAddress: string, data: Partial<UserUpdateKycDTO>) {
    
     const record = await this.userKycModel.findOne({walletAddress:walletAddress});
@@ -70,6 +69,18 @@ export class UserKycService {
     record.email = data.email;
     record.bank = data.bank;
     record.bankAccount = data.bankAccount;
+    await record.save();
+    return record;
+  }
+  // admin Update KYC status
+  async updateKYCStatus(walletAddress: string,kycStatus:string) {
+   
+    const record = await this.userKycModel.findOne({walletAddress:walletAddress});
+    if (!record) {
+      return record;
+    }
+    record.kycStatus = kycStatus;
+
     await record.save();
     return record;
   }
