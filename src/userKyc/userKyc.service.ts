@@ -51,6 +51,19 @@ export class UserKycService {
     sort: { createdAt: -1 }, // optional: latest first
   });
 }
+
+  async getUsers(page: number = 1, limit: number = 10) {
+  return await this.userKycModel.paginate({
+  
+  }, {
+    page,
+    limit,
+    lean: true,
+    sort: { createdAt: -1 }, // optional: latest first
+          select: 'name email' 
+
+  });
+}
   // Get KYC record by ID
   async getKYCById(walletAddress: string): Promise<UsersKYC> {
     const record = await this.userKycModel.findOne({walletAddress:walletAddress});

@@ -56,6 +56,12 @@ export class UserKycController {
   async findAll(@Query("page") page?: number, @Query("limit") limit?: number) {
     return await this.userKycService.getAllKYC(page, limit);
   }
+  // Get all users project name and email
+  @Get("/users")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getUsers(@Query("page") page?: number, @Query("limit") limit?: number) {
+    return await this.userKycService.getUsers(page, limit);
+  }
 
   // Get KYC record by ID
   @Get(":walletAddress")
