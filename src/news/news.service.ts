@@ -17,6 +17,7 @@ export class NewsService {
       content: data.content,
       imageUrl: files.imageUrl,
       publishedBy: data.publishedBy,
+      createdAt:data.date
     });
     return createdNews;
       } catch (error) {
